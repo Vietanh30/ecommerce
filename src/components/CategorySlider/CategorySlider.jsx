@@ -8,7 +8,7 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 
 function CategorySlider({categories}) {
     console.log(categories);
-
+    const slidesToShow = categories.length < 6 ? categories.length : 6;
     
     const sliderRef = useRef(null);
 
@@ -16,7 +16,7 @@ function CategorySlider({categories}) {
         dots: false,
         infinite: true,
         speed: 500,
-        slidesToShow: 6,
+        slidesToShow: slidesToShow || 6,
         slidesToScroll: 1,
     };
 

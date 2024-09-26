@@ -1,14 +1,17 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import iconCart from '../../assets/Header/iconCart.svg';
 import iconSearch from '../../assets/Header/iconSearch.svg';
 import path from '../../constants/path';
-import { getAccessTokenFromLS } from '../../utils/auth';
+import { clearLS, getAccessTokenFromLS } from '../../utils/auth';
 import { useEffect, useState } from 'react';
 import userApi from '../../api/userApi';
-
+import Swal from 'sweetalert2';
+import imgUser from "../../assets/Header/user.svg"
 function Header() {
+    const navigate = useNavigate()
     const location = useLocation();
-    const [quantityCart, setQuantityCart] = useState("");
+    const [quantityCart, setQuantityCart] = useState(0);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(() => {
         const token = getAccessTokenFromLS();
@@ -21,17 +24,33 @@ function Header() {
         try {
             const response = await userApi.getCart(token);
             if (response.data.status === 200) {
-                const products = response.data.data.products  
-                setQuantityCart(products.length)          
-                console.log(quantityCart);
-                              
+                const products = response.data.data.products;
+                setQuantityCart(products.length);
             }
         } catch (err) {
             console.log(err);
-            
         }
     };
-    return ( 
+
+    const handleLogout = () => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You will be logged out!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#DB4444',
+            cancelButtonColor: '#f0ad4e',
+            confirmButtonText: 'Yes, log me out!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                clearLS()
+                navigate(path.login)
+            }
+        });
+    };
+
+    return (
         <div className='border-b'>
             <div className="container mx-auto pt-10 pb-4">
                 <div className="flex justify-between">
@@ -58,7 +77,7 @@ function Header() {
                             <div className={`relative ${location.pathname === path.login ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:-translate-y-1 after:mt-1' : ''}`}>
                                 Signup
                             </div>
-                        </Link>    
+                        </Link>
                     </div>
                     <div className="flex gap-6">
                         <div className="relative">
@@ -75,11 +94,30 @@ function Header() {
                         </div>
                         <div className='cursor-pointer relative'>
                             <Link to={path.cart}>
-
-                                <img src={iconCart} alt="" />
+                                <img src={iconCart} alt="Cart" />
                                 <div className='absolute px-1 text-white bg-red-600 left-[-5%] top-[-10%] rounded-full text-[9px] font-semibold'>{quantityCart}</div>
                             </Link>
+                            {/* Dropdown Menu */}
+                            
                         </div>
+                        <div className="relative">
+                                <button onClick={() => setDropdownOpen(!dropdownOpen)}>
+                                    <div className="">
+                                        <img src={imgUser} alt="" />
+                                    </div>
+                                </button>
+                                {dropdownOpen && (
+                                    <div className="absolute right-0 bg-white shadow-md rounded mt-2 z-10 w-40">
+                                        <Link to={path.historyOrder} className="block px-4 py-2 text-sm text-black hover:bg-gray-200">History Order</Link>
+                                        <button 
+                                            onClick={handleLogout} 
+                                            className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-200"
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                     </div>
                 </div>
             </div>

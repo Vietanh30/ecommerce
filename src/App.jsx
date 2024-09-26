@@ -22,6 +22,7 @@ import ProductChildDetail from "./pages/ProductChildDetail/ProductChildDetail";
 import AllCategories from "./pages/AllCategories/AllCategories";
 import { AuthProvider } from "./components/PrivateRoute/AuthContext";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import HistoryOrder from "./pages/HistoryOrder/HistoryOrder";
 
 function App() {  
   return (
@@ -41,7 +42,9 @@ function App() {
           <Route path={path.checkout} element={
             <PrivateRoute requiredRole={2}><Checkout /></PrivateRoute>
           } />
-          
+          <Route path={path.historyOrder} element={
+            <PrivateRoute requiredRole={2}><HistoryOrder /></PrivateRoute>
+          } />
           {/* admin routes */}
           <Route path={path.loginAdmin} element={<LoginAdmin />} />
           <Route path={path.dashboard} element={

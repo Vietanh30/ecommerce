@@ -5,10 +5,12 @@ const path = {
     login: '/login',
     checkout: '/checkout',
     products: '/products',
+    historyOrder: '/history-order',
     productDetail: (id)=> `/products/${id}`,
     error: '/error',
     cart: '/cart',
     register: '/register',
+
     // admin
     loginAdmin: '/login-admin',
     dashboard: '/dashboard',
