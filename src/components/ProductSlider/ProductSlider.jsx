@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick-theme.css"; // Import slick theme
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
-function ProductSlider() {
+function ProductSlider({products}) {
   const sliderRef = useRef(null);
 
   const settings = {
@@ -54,13 +54,15 @@ function ProductSlider() {
         <FontAwesomeIcon icon={faChevronLeft} className="text-gray-600" />
       </button>
       <Slider ref={sliderRef} {...settings}>
-        <div><Product /></div>
-        <div><Product /></div>
-        <div><Product /></div>
-        <div><Product /></div>
-        <div><Product /></div>
-        <div><Product /></div>
-        <div><Product /></div>
+      {products.length > 0 ? (
+                    products.map((product) => (
+                        <div key={product.id}> {/* Đảm bảo có khóa duy nhất */}
+                            <Product product = {product} />
+                        </div>
+                    ))
+                ) : (
+                    <div>No products.</div>
+                )}
       </Slider>
       <button
         onClick={next}

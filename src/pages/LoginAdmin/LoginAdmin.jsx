@@ -4,15 +4,19 @@ import Swal from "sweetalert2";
 import bgLogin from "../../assets/Login/bg-login.svg";
 import path from "../../constants/path";
 import adminApi from "../../api/adminApi";
-import { setAccessTokenToLS, setProfileToLS } from "../../utils/auth";
+import { clearLS, setAccessTokenToLS, setProfileToLS } from "../../utils/auth";
+import Loading from "../../components/Loading/Loading";
+import ErrorAdmin from "../ErrorAdmin/ErrorAdmin";
 
 function LoginAdmin() {
     const [emailOrPhone, setEmailOrPhone] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
     const navigate = useNavigate()
     const handleLogin = async (e) => {
         e.preventDefault(); // Ngăn chặn hành vi mặc định của form
-
+        
         // Kiểm tra xem các trường có trống không
         if (!emailOrPhone || !password) {
             Swal.fire({
@@ -23,11 +27,12 @@ function LoginAdmin() {
             });
             return; // Ngừng thực thi nếu có trường trống
         }
-
+        setLoading(true)
         try {
             const response = await adminApi.login(emailOrPhone, password);
             console.log(response);
            if(response.data.status === 200) {
+            clearLS()
                Swal.fire({
                    title: 'Success!',
                    text: 'You have logged in successfully.',
@@ -36,11 +41,9 @@ function LoginAdmin() {
                    showConfirmButton: false
                }).then(() => {
                    setAccessTokenToLS(response.data.data.access_token)
-                //    navigate(path.dashboard)
+                   navigate(path.dashboard)
                 });
                 const profile = await adminApi.getProfile(response.data.data.access_token)
-                console.log(profile);
-                
                 setProfileToLS(profile.data.data)
            }
            else if(response.data.status === 422){
@@ -55,16 +58,14 @@ function LoginAdmin() {
             });
            }
         } catch (error) {
-            // Hiển thị thông báo lỗi
-            Swal.fire({
-                title: 'Error!',
-                text: 'Login failed. Please check your credentials.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            setError(true)
+        }
+        finally {
+            setLoading(false)
         }
     };
-
+    if (loading) return <Loading />; // Hiển thị loading khi đang tải
+    if (error) return <ErrorAdmin />; // Hiển thị lỗi nếu có
     return ( 
         <>
             <div className="container-fluid">

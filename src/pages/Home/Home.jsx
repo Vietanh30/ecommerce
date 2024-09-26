@@ -13,14 +13,61 @@ import support from "../../assets/Home/support.svg"
 import safe from "../../assets/Home/safe.svg"
 import ProductSlider from "../../components/ProductSlider/ProductSlider";
 import Footer from "../../components/Footer/Footer";
+import { useCallback, useEffect, useState } from "react";
+import userApi from "../../api/userApi";
+import Loading from "../../components/Loading/Loading";
+import Error from "../Error/Error";
 function Home() {
+    const [categories, setCategories] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [bestSale, setBestSale] = useState([]);
+    const [flashSale, setFlashSale] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+    // Sử dụng useCallback để tối ưu hóa fetchDataHome
+    const fetchDataHome = useCallback(async () => {
+        try {
+            setLoading(true);
+            const response = await userApi.getInforHome();
+            const { categories: fetchedCategories, newest_product: fetchedProducts, best_sell : fetchedBestSell, flash_sale: fetchedFlashSell } = response.data.data;
+            console.log(response.data.data);
+            
+            // Kiểm tra nếu dữ liệu thực sự thay đổi thì mới cập nhật state
+            if (JSON.stringify(categories) !== JSON.stringify(fetchedCategories)) {
+                setCategories(fetchedCategories);
+            }
+            if (JSON.stringify(products) !== JSON.stringify(fetchedProducts)) {
+                setProducts(fetchedProducts);
+            }
+            if (JSON.stringify(bestSale) !== JSON.stringify(fetchedBestSell)) {
+                setBestSale(fetchedBestSell);
+            }
+            if (JSON.stringify(flashSale) !== JSON.stringify(fetchedFlashSell)) {
+                setFlashSale(fetchedFlashSell);
+            }
+        } catch (error) {
+               setError(true) 
+        }
+        finally{
+            setLoading(false)
+        }
+        
+    }, [categories, products, flashSale, bestSale]); // Chỉ phụ thuộc vào `categories` và `products`
+
+    useEffect(() => {
+        fetchDataHome();
+    }, [fetchDataHome]); // Không thêm categories hay products ở đây
+
+    if (loading) return <Loading />; // Hiển thị loading khi đang tải
+    if (error) return <Error />; // Hiển thị lỗi nếu có
+    
     return ( 
         <div>
             <Header />    
-            <Banner/>
-            <FashSales/>
-            <Categories/>
-            <BestSelling/>
+            <Banner cateories={categories}/>
+            <FashSales flashSale={flashSale}/>
+            <Categories categories ={categories} />
+            <BestSelling bestSale ={bestSale}/>
             <div className="container mx-auto mt-20">
                 <div className="bg-[#000] grid grid-cols-12 max-h-[500px] items-center justify-center py-10 ">
                     <div className="col-span-4 col-start-2">
@@ -74,7 +121,7 @@ function Home() {
                 <div className="mt-6">
                     <div className="font-inter text-3xl font-semibold">Explore Our Products</div>
                     <div className="mt-8">
-                        <ProductSlider/>
+                        <ProductSlider products = {products}/>
                     </div>
                     <div className="flex justify-center mt-16">
                         <button className="text-[#FAFAFA] bg-[#DB4444] hover:bg-red-600 py-4 px-12 rounded">View All Products</button>

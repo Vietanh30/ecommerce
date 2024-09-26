@@ -1,6 +1,7 @@
 import CategorySlider from "../CategorySlider/CategorySlider";
 
-function Categories() {
+function Categories({categories}) {
+    
     return ( 
         <div className="container mx-auto mt-20">
             <div className="flex gap-5 items-center">
@@ -10,7 +11,7 @@ function Categories() {
             <div className="mt-6">
                 <div className="font-inter text-3xl font-semibold">Browse By Category</div>
                 <div className="mt-8">
-                    <CategorySlider/>
+                    <CategorySlider categories = {categories} />
                     <div className="mt-14 border-b"></div>
                 </div>
             </div>

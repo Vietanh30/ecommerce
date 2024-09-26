@@ -1,6 +1,6 @@
 import ProductSlider from "../ProductSlider/ProductSlider";
 
-function BestSelling() {
+function BestSelling({bestSale}) {
     return ( 
         <div className="container mx-auto mt-20">
             <div className="flex gap-5 items-center">
@@ -10,7 +10,7 @@ function BestSelling() {
             <div className="mt-6">
                 <div className="font-inter text-3xl font-semibold">Best Selling Products</div>
                 <div className="mt-8">
-                    < ProductSlider/>
+                    < ProductSlider products={bestSale} />
                 </div>
             </div>
         </div>

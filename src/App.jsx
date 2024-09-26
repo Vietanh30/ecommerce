@@ -16,32 +16,67 @@ import ProductDetailAdmin from "./pages/ProductDetailAdmin/ProductDetailAdmin";
 import AddProduct from "./pages/AddProduct/AddProduct";
 import OrderDetailAdmin from "./pages/OderDetailAdmin/OrderDetailAdmin";
 import LoginAdmin from "./pages/LoginAdmin/LoginAdmin";
+import AddProductChild from "./pages/AddProductChild/AddProductChild";
+import ErrorAdmin from "./pages/ErrorAdmin/ErrorAdmin";
+import ProductChildDetail from "./pages/ProductChildDetail/ProductChildDetail";
+import AllCategories from "./pages/AllCategories/AllCategories";
+import { AuthProvider } from "./components/PrivateRoute/AuthContext";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 
-function App() {
+function App() {  
   return (
-    <Router>
-      <Routes>
-        {/* user */}
-        <Route path={path.cart} element={<Cart />}></Route>
-        <Route path={path.home} element={<Home />}></Route>
-        <Route path={path.about} element={<About />}></Route>
-        <Route path={path.error} element={<Error />}></Route>
-        <Route path={path.login} element={<Login />}></Route>
-        <Route path={path.register} element={<Register />}></Route>
-        <Route path={path.products + `/:id`} element={<ProductDetail />} />
-        <Route path={path.cart} element={<Cart />}></Route>
-        <Route path={path.checkout} element={<Checkout />}></Route>
-        {/* admin */}
-        <Route path={path.loginAdmin} element={<LoginAdmin />}></Route>
-        <Route path={path.dashboard} element={<Dashboard />}></Route>
-        <Route path={path.allProduct} element={<AllProduct />}></Route>
-        <Route path={path.allProduct + `/:id`} element={<ProductDetailAdmin />} />
-        <Route path={path.orderList} element={<OrderList />}></Route>
-        <Route path={path.orderList + `/:id`} element={<OrderDetailAdmin />} />
-
-        <Route path={path.addProduct} element={<AddProduct />}></Route>
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* user routes */}
+          <Route path={path.cart} element={
+            <PrivateRoute requiredRole={2}><Cart /></PrivateRoute>
+          } />
+          <Route path={path.home} element={<Home />} />
+          <Route path={path.about} element={<About />} />
+          <Route path={path.error} element={<Error />} />
+          <Route path={path.login} element={<Login />} />
+          <Route path={path.register} element={<Register />} />
+          <Route path={path.products + `/:id`} element={<ProductDetail />} />
+          <Route path={path.checkout} element={
+            <PrivateRoute requiredRole={2}><Checkout /></PrivateRoute>
+          } />
+          
+          {/* admin routes */}
+          <Route path={path.loginAdmin} element={<LoginAdmin />} />
+          <Route path={path.dashboard} element={
+            <PrivateRoute requiredRole={1}><Dashboard /></PrivateRoute>
+          } />
+          <Route path={path.allProduct} element={
+            <PrivateRoute requiredRole={1}><AllProduct /></PrivateRoute>
+          } />
+          <Route path={path.allProduct + `/:id`} element={
+            <PrivateRoute requiredRole={1}><ProductDetailAdmin /></PrivateRoute>
+          } />
+          <Route path={path.orderList} element={
+            <PrivateRoute requiredRole={1}><OrderList /></PrivateRoute>
+          } />
+          <Route path={path.orderList + `/:id`} element={
+            <PrivateRoute requiredRole={1}><OrderDetailAdmin /></PrivateRoute>
+          } />
+          <Route path={path.allCategories} element={
+            <PrivateRoute requiredRole={1}><AllCategories /></PrivateRoute>
+          } />
+          <Route path={path.addProduct} element={
+            <PrivateRoute requiredRole={1}><AddProduct /></PrivateRoute>
+          } />
+          <Route path={path.addProductChild(':id')} element={
+            <PrivateRoute requiredRole={1}><AddProductChild /></PrivateRoute>
+          } />
+          <Route path={path.productChildDetail(':id')} element={
+            <PrivateRoute requiredRole={1}><ProductChildDetail /></PrivateRoute>
+          } />
+          <Route path={path.errorAdmin} element={
+            <PrivateRoute requiredRole={1}><ErrorAdmin /></PrivateRoute>
+          } />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

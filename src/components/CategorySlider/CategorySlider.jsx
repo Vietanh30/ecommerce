@@ -6,7 +6,10 @@ import Category from '../Category/Category';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
-function CategorySlider() {
+function CategorySlider({categories}) {
+    console.log(categories);
+
+    
     const sliderRef = useRef(null);
 
     const settings = {
@@ -34,13 +37,15 @@ function CategorySlider() {
                 <FontAwesomeIcon icon={faChevronLeft} className="text-gray-600" />
             </button>
             <Slider ref={sliderRef} {...settings}>
-                <div><Category /></div>
-                <div><Category /></div>
-                <div><Category /></div>
-                <div><Category /></div>
-                <div><Category /></div>
-                <div><Category /></div>
-                {/* Thêm nhiều Category nếu cần */}
+            {categories.length > 0 ? (
+                    categories.map((category) => (
+                        <div key={category.id}> {/* Đảm bảo có khóa duy nhất */}
+                            <Category category ={category} />
+                        </div>
+                    ))
+                ) : (
+                    <div>Không có danh mục nào</div>
+                )}
             </Slider>
             <button
                 onClick={next}

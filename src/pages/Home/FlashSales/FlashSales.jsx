@@ -1,5 +1,5 @@
 import ProductSlider from "../../../components/ProductSlider/ProductSlider";
-function FashSales() {
+function FashSales({flashSale}) {    
     return ( 
         <div className="container mx-auto mt-20">
             <div className="flex gap-5 items-center">
@@ -9,7 +9,7 @@ function FashSales() {
             <div className="mt-6">
                 <div className="font-inter text-3xl font-semibold">Flash Sales</div>
                 <div className="mt-8">
-                    <ProductSlider/>
+                    <ProductSlider products= {flashSale}/>
                     <div className="flex justify-center mt-16">
                         <button className="text-[#FAFAFA] bg-[#DB4444] hover:bg-red-600 py-4 px-12 rounded">View All Products</button>
                     </div>

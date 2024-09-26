@@ -4,11 +4,15 @@ import Swal from "sweetalert2";
 import bgLogin from "../../assets/Login/bg-login.svg";
 import path from "../../constants/path";
 import userApi from "../../api/userApi";
-import { setAccessTokenToLS } from "../../utils/auth";
+import { clearLS, setAccessTokenToLS, setProfileToLS } from "../../utils/auth";
+import Loading from "../../components/Loading/Loading";
+import Error from "../Error/Error";
 
 function Login() {
     const [emailOrPhone, setEmailOrPhone] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
     const navigate = useNavigate()
     const handleLogin = async (e) => {
         e.preventDefault(); // Ngăn chặn hành vi mặc định của form
@@ -23,10 +27,12 @@ function Login() {
             });
             return; // Ngừng thực thi nếu có trường trống
         }
-
+        setLoading(true);
         try {
             const response = await userApi.login(emailOrPhone, password);
+            
            if(response.data.status === 200) {
+            clearLS()
                Swal.fire({
                    title: 'Success!',
                    text: 'You have logged in successfully.',
@@ -34,9 +40,15 @@ function Login() {
                    timer: 1500,
                    showConfirmButton: false
                }).then(() => {
-                setAccessTokenToLS(response.data.access_token)
+                console.log(response.data);
+                
+                setAccessTokenToLS(response.data.data.access_token)
                 navigate(path.home)
-               });
+             });
+             const profile = await userApi.getProfile(response.data.data.access_token)
+             console.log(profile.data.data);
+             
+             setProfileToLS(profile.data.data)
            }
            else if(response.data.status === 422){
             Swal.fire({
@@ -50,16 +62,21 @@ function Login() {
             });
            }
         } catch (error) {
-            // Hiển thị thông báo lỗi
+            // setError(true)
+            console.log(error.response.data);
             Swal.fire({
-                title: 'Error!',
-                text: 'Login failed. Please check your credentials.',
+                title: 'Erorr!',
+                text: error.response.data.message,
                 icon: 'error',
-                confirmButtonText: 'Try Again',
+                confirmButtonText: 'OK',
             });
         }
+        finally{
+            setLoading(false)
+        }
     };
-
+    if (loading) return <Loading />; // Hiển thị loading khi đang tải
+    if (error) return <Error />; // Hiển thị lỗi nếu có
     return ( 
         <>
             <div className="container-fluid">

@@ -6,19 +6,25 @@ function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation(); // Lấy vị trí hiện tại
 
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-    };
+    // const toggleDropdown = () => {
+    //     setIsOpen(!isOpen);
+    // };
 
     return (
         <div className="bg-[#E7E7E3]">
-            <div className="flex flex-col min-h-screen h-full w-64 bg-white text-[#232321] p-5 border-r-2 rounded-ee-2xl">
+            <div className="flex flex-col min-h-screen h-full w-60 bg-white text-[#232321] p-5 border-r-2 rounded-ee-2xl">
                 <h2 className="text-2xl font-bold mb-6 cursor-pointer">Exclusive</h2>
                 <Link
                     to={path.dashboard}// Đường dẫn cho Dashboard
                     className={`mb-4 p-2 rounded-lg ${location.pathname === path.dashboard ? "bg-[#003F62] text-white" : "hover:bg-[#003F62] hover:text-white"}`}
                 >
                     Dashboard
+                </Link>
+                <Link
+                    to={path.allCategories} // Đường dẫn cho All Products
+                    className={`mb-4 p-2 rounded-lg ${location.pathname === path.allCategories ? "bg-[#003F62] text-white" : "hover:bg-[#003F62] hover:text-white"}`}
+                >
+                    All Categories
                 </Link>
                 <Link
                     to={path.allProduct} // Đường dẫn cho All Products
@@ -32,7 +38,7 @@ function Sidebar() {
                 >
                     Order List
                 </Link>
-                <div className="mt-4">
+                {/* <div className="mt-4">
                     <div
                         className="cursor-pointer mb-2 hover:bg-[#003F62] hover:text-white p-2 rounded-lg"
                         onClick={toggleDropdown}
@@ -61,7 +67,7 @@ function Sidebar() {
                             </Link>
                         </div>
                     )}
-                </div>
+                </div> */}
             </div>
         </div>
     );

@@ -1,104 +1,184 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../PrivateRoute/AuthContext'; 
+import Swal from 'sweetalert2';
 import Header from '../Header/Header';
-import xbox1 from "../../assets/Product/xbox1.svg";
-import xbox2 from "../../assets/Product/xbox2.svg";
-import xbox3 from "../../assets/Product/xbox3.svg";
-import xbox4 from "../../assets/Product/xbox4.svg";
 import StarDisplay from '../Product/Star/Star';
-import ProductSlider from '../ProductSlider/ProductSlider';
 import Footer from '../Footer/Footer';
+import Loading from '../Loading/Loading';
+import userApi from '../../api/userApi';
+import { getAccessTokenFromLS } from '../../utils/auth';
 
 function ProductDetail() {
-    const { id } = useParams(); // Lấy ID từ URL
-    console.log(id);
-    
-    const [quantity, setQuantity] = useState(1); // State cho số lượng
-    const [hoveredImage, setHoveredImage] = useState(xbox1); // State cho ảnh lớn
-
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [accessToken, setAccessToken] = useState("");
+    const [loading, setLoading] = useState(false); // State để quản lý trạng thái tải
+    const [error, setError] = useState(false); // State để lưu trữ lỗi
+    const { isAuthenticated, role } = useAuth();
+    const [quantity, setQuantity] = useState(1);
+    const [hoveredImage, setHoveredImage] = useState('');
+    const [product, setProduct] = useState(null);
+    useEffect(() => {
+        const token = getAccessTokenFromLS();
+        setAccessToken(token);
+    }, []);
     const handleImageHover = (image) => {
         setHoveredImage(image);
     };
 
+    useEffect(() => {
+        const fetchProductDetails = async () => {
+            setLoading(true)
+            try {
+                const response = await userApi.getProductDetail(id);
+                console.log(response);
+                
+                const data = response.data.data.currentProduct;                ;
+                setProduct(data);
+                if (data.list_child && data.list_child.length > 0) {
+                    setHoveredImage(data.list_child[0].img);
+                }
+            } catch (error) {
+                console.error('Error fetching product details:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProductDetails();
+    }, [id]);
+
+    const handleAddToCart = async () => {
+        if (!isAuthenticated && role !== 2) {
+            navigate(path.login);
+        } else {
+            const selectedChild = product.list_child.find(child => child.selected);
+            if (selectedChild) {
+                try {
+                    setLoading(true)
+                    const response = await userApi.addToCart(selectedChild.id, quantity, accessToken);
+                    console.log(response);
+                    
+                    if (response.data.status === 200) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Product added successfully.',
+                            icon: 'success',
+                        }).then(() => {
+                            // Reset lại quantity và bỏ chọn selected child
+                            setQuantity(1);
+                            const updatedList = product.list_child.map(child => ({
+                                ...child,
+                                selected: false
+                            }));
+                            setProduct({ ...product, list_child: updatedList });
+                        });
+                    }
+                    if(response.data.status === 400){
+                        Swal.fire({
+                            title: 'Error!',
+                            html: `
+                                ${response.data.message ? response.data.message + '<br>':''} 
+                            `,
+                            icon: 'error',
+                            confirmButtonText: 'Try Again',
+                        });
+                    }
+                } catch (error) {
+                    setError(true)
+                }
+                finally{
+                    setLoading(false)
+                }
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Selection!',
+                    text: 'Please select a product option before adding to cart.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+    };    
+
+    if (loading) return <Loading />;
+    if (!product) return <div>Product not found.</div>;
+
     return ( 
-        <div>
+        <>
             <Header />
             <div className="container mx-auto mt-20">
                 <div className="grid grid-cols-12 gap-16">
                     <div className="col-span-7">
                         <div className="flex justify-between">
-                            <div className='gap-6 flex flex-col'>
-                                <div className="bg-[#F5F5F5] rounded cursor-pointer">
-                                    <img 
-                                        className="max-w-32 max-h-28 px-6 py-3" 
-                                        src={xbox1} 
-                                        alt="" 
-                                        onMouseEnter={() => handleImageHover(xbox1)}
-                                    />
-                                </div>
-                                <div className="bg-[#F5F5F5] rounded cursor-pointer">
-                                    <img 
-                                        className="max-w-32 max-h-28 px-6 py-3" 
-                                        src={xbox2} 
-                                        alt="" 
-                                        onMouseEnter={() => handleImageHover(xbox2)}
-                                    />
-                                </div>
-                                <div className="bg-[#F5F5F5] rounded cursor-pointer">
-                                    <img 
-                                        className="max-w-32 max-h-28 px-6 py-3" 
-                                        src={xbox3} 
-                                        alt="" 
-                                        onMouseEnter={() => handleImageHover(xbox3)}
-                                    />
-                                </div>
-                                <div className="bg-[#F5F5F5] rounded cursor-pointer">
-                                    <img 
-                                        className="max-w-32 max-h-28 px-6 py-3" 
-                                        src={xbox4} 
-                                        alt="" 
-                                        onMouseEnter={() => handleImageHover(xbox4)}
-                                    />
-                                </div>
-                            </div>
-                            <div className="bg-[#F5F5F5] rounded w-4/5 flex items-center">
+                        <div className='gap-6 flex flex-col'>
+                        {product.list_child.map((item, index) => (
+                            <div key={index} className={`bg-[#F5F5F5] rounded cursor-pointer ${item.selected ? 'border-2 border-[#DB4444]' : ''}`}>
                                 <img 
-                                    className='max-w-md max-h-80 min-w-md min-h-80 mx-auto' 
-                                    src={hoveredImage} 
-                                    alt="" 
+                                    className="max-w-32 max-h-28 px-6 py-3" 
+                                    src={item.img} 
+                                    alt={item.name} 
+                                    onMouseEnter={() => handleImageHover(item.img)} 
+                                    onClick={() => {
+                                        const updatedList = product.list_child.map(child => ({
+                                            ...child,
+                                            selected: child.id === item.id 
+                                        }));
+                                        setProduct({ ...product, list_child: updatedList });
+                                        setHoveredImage(item.img); // Update hovered image on selection
+                                    }}
                                 />
                             </div>
+                        ))}
+                    </div>
+                    <div className="bg-[#F5F5F5] rounded w-4/5 flex items-center">
+                        <img 
+                            className='max-w-md max-h-80 min-w-md min-h-80 mx-auto' 
+                            src={hoveredImage} 
+                            alt="" 
+                        />
+                    </div>
                         </div>
                     </div>
                     <div className="col-span-4">
-                        <div className='font-inter text-2xl font-semibold'>Havic HV G-92 Gamepad</div>
+                        <div className='font-inter text-2xl font-semibold'>{product.name}</div>
                         <div className='mt-2'>
                             <StarDisplay rating={3} />
                         </div>
                         <div className='mt-2 font-inter font-normal text-[#000]'>
-                            $192.00
+                            ${product.selling_price}
                         </div>
-                        <div className='mt-4 text-sm font-normal'>
-                            PlayStation 5 Controller Skin High quality vinyl with air channel adhesive for easy bubble free install & mess free removal Pressure sensitive.
+                        <div className='mt-4 text-sm font-normal line-clamp-3'>
+                            {product.description}
                         </div>
                         <div className='border-b w-full my-4 border-2'></div>
-                        <div className=''>Colours: </div>
-                        <div className='mt-4 flex gap-6 items-center'>
-                            <div>Size:</div>
-                            <div className='flex gap-4'>
-                                {['XS', 'S', 'M', 'L', 'XL'].map(size => (
-                                    <button key={size} className='text-sm font-medium w-8 h-8 
-                                        focus:bg-[#DB4444] focus:text-white focus:border-[#DB4444] 
-                                        hover:bg-[#DB4444] hover:text-white hover:border-[#DB4444] 
-                                        border rounded border-black'>
-                                        {size}
+                        <div className='my-4'>
+                            <div className='grid grid-cols-12 gap-4'>
+                                {product.list_child.map((item) => (
+                                    <button key={item.id}
+                                        className={`mt-2 text-sm text-center border border-black rounded-md p-2 col-span-3 
+                                        ${item.selected ? 'bg-[#DB4444] text-white' : ''} 
+                                        focus:bg-[#DB4444] focus:text-white 
+                                        hover:bg-[#DB4444] hover:text-white`}
+                                        onClick={() => {
+                                            const updatedList = product.list_child.map(child => ({
+                                                ...child,
+                                                selected: child.id === item.id 
+                                            }));
+                                            setProduct({ ...product, list_child: updatedList });
+                                        setHoveredImage(item.img); // Update hovered image on selection
+
+                                        }}
+                                    >
+                                        {item.feature_name}
                                     </button>
                                 ))}
                             </div>
                         </div>
-                        <div className='mt-5 flex gap-4'>
+                        <div className='mt-5 flex gap-6'>
                             <div className='flex'>
                                 <button 
                                     className='text-3xl px-3 py-[2px] border-black border border-r-0 
@@ -109,7 +189,7 @@ function ProductDetail() {
                                 >
                                     -
                                 </button>
-                                <div className='text-xl font-medium px-6 w-16 h-full border-black border flex items-center'>
+                                <div className='text-xl font-medium  w-16 h-full border-black border flex items-center justify-center'>
                                     {quantity}
                                 </div>
                                 <button 
@@ -122,14 +202,12 @@ function ProductDetail() {
                                     +
                                 </button>
                             </div>
-                            <button className='bg-[#DB4444] text-base font-medium px-12 rounded text-white 
-                                hover:bg-red-700 focus:bg-red-700'>
-                                Buy Now
-                            </button>
                             <div className='border-black border rounded flex items-center px-2 
                                 focus:bg-[#DB4444] focus:text-white focus:border-[#DB4444] 
-                                hover:bg-[#DB4444] hover:text-white hover:border-[#DB4444] 
-                                cursor-pointer group'>
+                                hover:bg-[#DB4444] hover:text-white hover:border-[#DB4444]                                    
+                                cursor-pointer group'
+                                onClick={handleAddToCart}>
+                                  <span className='mr-2'>Add to Cart</span>  
                                 <FontAwesomeIcon 
                                     icon={faShoppingCart} 
                                     className='w-5 h-5 p-1 text-black group-hover:text-white' 
@@ -147,12 +225,12 @@ function ProductDetail() {
                 <div className="mt-6">
                     <div className="font-inter text-3xl font-semibold">Explore Our Products</div>
                     <div className="mt-8">
-                        <ProductSlider/>
+                        {/* <ProductSlider/> */}
                     </div>
                 </div>
             </div>
             <Footer />
-        </div>
+        </>
     );
 }
 
