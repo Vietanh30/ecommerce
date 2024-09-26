@@ -72,7 +72,7 @@ function OrderList() {
                                                     <FontAwesomeIcon icon={faEye} className="cursor-pointer" />
                                                 </Link>
                                             </td>
-                                            <td className="py-3">{index}</td>
+                                            <td className="py-3">{index + 1}</td>
                                             <td className="py-3 italic">#{item.id}</td>
                                             <td className="py-3">{formatDate(item.created_at)}</td>
                                             <td className="py-3">{item.address.name}</td>

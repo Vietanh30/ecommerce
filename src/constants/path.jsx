@@ -6,6 +6,8 @@ const path = {
     checkout: '/checkout',
     products: '/products',
     historyOrder: '/history-order',
+    historyOrderDetail: (id) => `history-order/${id}`,
+
     productDetail: (id)=> `/products/${id}`,
     error: '/error',
     cart: '/cart',

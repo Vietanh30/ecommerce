@@ -13,6 +13,7 @@ export const URL_REGISTER = "register";
 export const URL_GET_PROFILE = "profile";
 export const URL_GET_ADDRESS = "address";
 export const URL_CREATE_ADDRESS = "create-address";
+export const URL_CHANGE_STATUS = "change-status";
 
 const userApi = {
   registerAccount: function (name, email, phone, password) {
@@ -85,6 +86,25 @@ const userApi = {
     });
   },
   updateCart: function (cartItem, access_token) {},
+  getHistoryOrders: function (access_token) {
+    return http.get(URL_ORDER_HISTORY, {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+  },
+  getOrderDetail: function (id, access_token) {
+    return http.get(`${URL_ORDER_DETAIL}?id=${id}`, {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+  },
+  changeStatusOrder: function (id, access_token) {
+    return http.post(
+      `${URL_CHANGE_STATUS}?id=${id}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${access_token}` },
+      }
+    );
+  },
 };
 
 export default userApi;

@@ -90,9 +90,6 @@ function OrderDetailAdmin() {
                         <div className="flex items-center justify-between my-4">
                             <div>{formatDate(orderDetail.created_at)}</div>
                             <select className="bg-[#d7d6d6] py-3 px-5 rounded-md" onChange={(e) => changeOrderStatus(e.target.value)}>
-                                <option value="">
-                                    Change Status
-                                </option>
                                 <option value="1">Pending</option>
                                 <option value="2">Pended</option>
                                 <option value="3">Shipping</option>

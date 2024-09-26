@@ -10,6 +10,7 @@ import Footer from '../Footer/Footer';
 import Loading from '../Loading/Loading';
 import userApi from '../../api/userApi';
 import { getAccessTokenFromLS } from '../../utils/auth';
+import ProductSlider from '../ProductSlider/ProductSlider';
 
 function ProductDetail() {
     const { id } = useParams();
@@ -21,6 +22,7 @@ function ProductDetail() {
     const [quantity, setQuantity] = useState(1);
     const [hoveredImage, setHoveredImage] = useState('');
     const [product, setProduct] = useState(null);
+    const [relatedProducts, setRelatedProducts] = useState(null);
     useEffect(() => {
         const token = getAccessTokenFromLS();
         setAccessToken(token);
@@ -38,6 +40,7 @@ function ProductDetail() {
                 
                 const data = response.data.data.currentProduct;                ;
                 setProduct(data);
+                setRelatedProducts(response.data.data.relatedProducts)
                 if (data.list_child && data.list_child.length > 0) {
                     setHoveredImage(data.list_child[0].img);
                 }
@@ -225,7 +228,7 @@ function ProductDetail() {
                 <div className="mt-6">
                     <div className="font-inter text-3xl font-semibold">Explore Our Products</div>
                     <div className="mt-8">
-                        {/* <ProductSlider/> */}
+                        <ProductSlider products={relatedProducts} />
                     </div>
                 </div>
             </div>

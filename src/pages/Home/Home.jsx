@@ -19,48 +19,46 @@ import Loading from "../../components/Loading/Loading";
 import Error from "../Error/Error";
 function Home() {
     const [categories, setCategories] = useState([]);
-    const [products, setProducts] = useState([]);
-    const [bestSale, setBestSale] = useState([]);
-    const [flashSale, setFlashSale] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
-    // Sử dụng useCallback để tối ưu hóa fetchDataHome
-    const fetchDataHome = useCallback(async () => {
-        try {
-            setLoading(true);
-            const response = await userApi.getInforHome();
-            const { categories: fetchedCategories, newest_product: fetchedProducts, best_sell : fetchedBestSell, flash_sale: fetchedFlashSell } = response.data.data;
-            console.log(response.data.data);
-            
-            // Kiểm tra nếu dữ liệu thực sự thay đổi thì mới cập nhật state
-            if (JSON.stringify(categories) !== JSON.stringify(fetchedCategories)) {
-                setCategories(fetchedCategories);
-            }
-            if (JSON.stringify(products) !== JSON.stringify(fetchedProducts)) {
-                setProducts(fetchedProducts);
-            }
-            if (JSON.stringify(bestSale) !== JSON.stringify(fetchedBestSell)) {
-                setBestSale(fetchedBestSell);
-            }
-            if (JSON.stringify(flashSale) !== JSON.stringify(fetchedFlashSell)) {
-                setFlashSale(fetchedFlashSell);
-            }
-        } catch (error) {
-               setError(true) 
-        }
-        finally{
-            setLoading(false)
-        }
-        
-    }, [categories, products, flashSale, bestSale]); // Chỉ phụ thuộc vào `categories` và `products`
+  const [products, setProducts] = useState([]);
+  const [bestSale, setBestSale] = useState([]);
+  const [flashSale, setFlashSale] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-    useEffect(() => {
-        fetchDataHome();
-    }, [fetchDataHome]); // Không thêm categories hay products ở đây
+  // Sử dụng useCallback để định nghĩa hàm fetch nhưng không cần phụ thuộc vào state
+  const fetchDataHome = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await userApi.getInforHome();
+      const { 
+        categories: fetchedCategories, 
+        newest_product: fetchedProducts, 
+        best_sell: fetchedBestSell, 
+        flash_sale: fetchedFlashSell 
+      } = response.data.data;
 
-    if (loading) return <Loading />; // Hiển thị loading khi đang tải
-    if (error) return <Error />; // Hiển thị lỗi nếu có
-    
+      // Cập nhật state với dữ liệu mới
+      setCategories(fetchedCategories);
+      setProducts(fetchedProducts);
+      setBestSale(fetchedBestSell);
+      setFlashSale(fetchedFlashSell);
+    } catch (error) {
+      setError(true); // Đặt trạng thái lỗi nếu có exception
+    } finally {
+      setLoading(false); // Tắt trạng thái loading sau khi tải xong (dù có lỗi hay không)
+    }
+  }, []);
+
+  // Chỉ gọi fetchDataHome một lần khi component mount
+  useEffect(() => {
+    fetchDataHome();
+  }, [fetchDataHome]);
+
+  // Hiển thị loading khi đang tải
+  if (loading) return <Loading />;
+  // Hiển thị lỗi nếu có
+  if (error) return <Error />;
+
     return ( 
         <div>
             <Header />    

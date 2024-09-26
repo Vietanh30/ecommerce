@@ -23,6 +23,7 @@ import AllCategories from "./pages/AllCategories/AllCategories";
 import { AuthProvider } from "./components/PrivateRoute/AuthContext";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import HistoryOrder from "./pages/HistoryOrder/HistoryOrder";
+import HistoryOrderDetail from "./pages/HistoryOrderDetail/HistoryOrderDetail";
 
 function App() {  
   return (
@@ -44,6 +45,9 @@ function App() {
           } />
           <Route path={path.historyOrder} element={
             <PrivateRoute requiredRole={2}><HistoryOrder /></PrivateRoute>
+          } />
+          <Route path={path.historyOrder + `/:id`} element={
+            <PrivateRoute requiredRole={2}><HistoryOrderDetail /></PrivateRoute>
           } />
           {/* admin routes */}
           <Route path={path.loginAdmin} element={<LoginAdmin />} />
