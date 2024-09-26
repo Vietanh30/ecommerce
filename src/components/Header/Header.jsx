@@ -63,11 +63,11 @@ function Header() {
                                 Home
                             </div>
                         </Link>
-                        <Link to={path.contact}>
+                        {/* <Link to={path.contact}>
                             <div className={`relative ${location.pathname === path.contact ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:-translate-y-1 after:mt-1' : ''}`}>
                                 Contact
                             </div>
-                        </Link>
+                        </Link> */}
                         <Link to={path.about}>
                             <div className={`relative ${location.pathname === path.about ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:-translate-y-1 after:mt-1' : ''}`}>
                                 About

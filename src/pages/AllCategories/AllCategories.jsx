@@ -52,8 +52,7 @@ function AllCategories() {
     }, [accessToken]); // Thêm accessToken vào dependency array
 
     const handleAddCategory = async () => {
-        setLoading(true)
-
+        
         if (!categoryNameAdd || !categoryImageAdd) {
             Swal.fire({
                 title: 'Warning!',
@@ -63,12 +62,13 @@ function AllCategories() {
             });
             return;
         }
-    
+        
         const formData = new FormData();
         formData.append("name", categoryNameAdd);
         formData.append("image", categoryImageAdd);
     
         try {
+            setLoading(true)
             const response = await categoryApi.addCategory(formData, accessToken); // Gọi API với accessToken              
             if (response.data.status === 200) {
                 Swal.fire({
@@ -179,7 +179,6 @@ function AllCategories() {
     };
 
     const handleUpdateCategory = async () => {
-        setLoading(true);
         const formData = new FormData();
         formData.append("id", selectedCategory.id);
     
@@ -190,12 +189,12 @@ function AllCategories() {
             formData.append("name", categoryName);
             isUpdated = true; // Đánh dấu là có sự thay đổi
         }
-    
+        
         if (categoryImage) {
             formData.append("image", categoryImage);
             isUpdated = true; // Đánh dấu là có sự thay đổi
         }
-    
+        
         if (!isUpdated) {
             Swal.fire({
                 title: 'No Changes!',
@@ -205,8 +204,9 @@ function AllCategories() {
             });
             return; // Nếu không có thay đổi, không gọi API
         }
-    
+        
         try {
+            setLoading(true);
             const response = await categoryApi.editCategory(formData, accessToken); // Gọi API cập nhật danh mục            
             if (response.data.status === 200) {
                 Swal.fire({

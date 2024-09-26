@@ -99,9 +99,8 @@ function AddProduct() {
         }
         return null;
     };
-
+    
     const handleSubmit = async (e) => {
-        setLoading(true);
         e.preventDefault();
         const errorMessage = validateForm();
         if (errorMessage) {
@@ -121,6 +120,7 @@ function AddProduct() {
         data.append("description", formData.description);
         data.append("image", fileImage); // Giả sử bạn lưu trữ file trong image.file   
         try {
+            setLoading(true);
             const response = await productApi.addProduct(data, accessToken);
             console.log(response);
             

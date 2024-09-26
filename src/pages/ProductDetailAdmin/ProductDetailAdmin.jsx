@@ -98,7 +98,6 @@ function ProductDetailAdmin() {
     };
 
     const handleUpdate = async () => {
-        setLoading(true);
         const data = new FormData();
         let hasChanges = false;
         data.append("id", id);
@@ -127,7 +126,7 @@ function ProductDetailAdmin() {
             data.append("image", fileImage);
             hasChanges = true;
         }
-    
+        
         // Nếu không có thay đổi nào, thông báo cho người dùng
         if (!hasChanges) {
             Swal.fire({
@@ -137,8 +136,9 @@ function ProductDetailAdmin() {
             });
             return; // Ngừng thực hiện nếu không có thay đổi
         }
-    
+        
         try {
+            setLoading(true);
             const response = await productApi.editProduct(data, accessToken);
             if (response.data.status === 200) {
                 Swal.fire({

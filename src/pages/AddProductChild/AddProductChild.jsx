@@ -92,9 +92,8 @@ function AddProductChild() {
     };
 
     const handleAddProductChild = async () => {
-        setLoading(true);
         if (!validateForm()) return;
-
+        
         const data = new FormData();
         data.append("product_id", productData.product_id); // ID của sản phẩm cha
         data.append("feature_name", productData.feature_name);
@@ -107,6 +106,7 @@ function AddProductChild() {
         }
 
         try {
+            setLoading(true);
             const response = await productApi.addProductChild(data, accessToken);
             console.log(response);
             

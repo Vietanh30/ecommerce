@@ -138,9 +138,8 @@ function ProductChildDetail() {
         ) || (fileImage !== null); // Kiểm tra xem có file hình ảnh mới không
     };
     const handleUpdateProductChild = async () => {
-        setLoading(true)
         if (!validateForm()) return;
-    
+        
         if (!hasChanges()) {
             Swal.fire({
                 icon: 'info',
@@ -169,8 +168,9 @@ function ProductChildDetail() {
         if (fileImage) { // Hoặc image !== null
             data.append("image", fileImage);
         }
-    
+        
         try {
+            setLoading(true)
             const response = await productApi.editProductChild(data, accessToken);
             console.log(response);
             
