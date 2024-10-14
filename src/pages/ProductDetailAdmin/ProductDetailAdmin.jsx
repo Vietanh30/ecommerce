@@ -31,7 +31,7 @@ function ProductDetailAdmin() {
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                // Fetch product details
+                // Lấy thông tin sản phẩm
                 const productResponse = await productApi.getProductDetail(id, accessToken);
                 console.log(productResponse.data.data);
                 
@@ -39,11 +39,11 @@ function ProductDetailAdmin() {
                 setInitialProduct(productResponse.data.data);
                 setImage(productResponse.data.data.img || null);
 
-                // Fetch categories
+                // Lấy danh sách danh mục
                 const categoriesResponse = await categoryApi.getAllCategories(accessToken);
                 setCategories(categoriesResponse.data.data.data);
 
-                // Fetch category details
+                // Lấy thông tin chi tiết danh mục
                 if (productResponse.data.data.category_id) {
                     const categoryResponse = await categoryApi.getCategoryDetails(productResponse.data.data.category_id, accessToken);
                     setCategoryDetails(categoryResponse.data.data);
@@ -131,8 +131,8 @@ function ProductDetailAdmin() {
         if (!hasChanges) {
             Swal.fire({
                 icon: 'info',
-                title: 'No Changes Made',
-                text: 'No fields have been changed. Please update at least one field.',
+                title: 'Không có thay đổi',
+                text: 'Không có trường nào đã được thay đổi. Vui lòng cập nhật ít nhất một trường.',
             });
             return; // Ngừng thực hiện nếu không có thay đổi
         }
@@ -143,44 +143,43 @@ function ProductDetailAdmin() {
             if (response.data.status === 200) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Updated!',
-                    text: 'Product details updated successfully.',
+                    title: 'Cập nhật thành công!',
+                    text: 'Thông tin sản phẩm đã được cập nhật thành công.',
                 })
             }
-            else if (response.data.status === 422){
+            else if (response.data.status === 422) {
                 Swal.fire({
-                    title: 'Error!',
+                    title: 'Lỗi!',
                     html: `
                         ${response.data.message.name ? response.data.message.name + '<br>' : ''}
                         ${response.data.message.selling_price ? response.data.message.selling_price + '<br>' : ''}
                     `,
                     icon: 'error',
-                    confirmButtonText: 'Try Again',
+                    confirmButtonText: 'Thử lại',
                 });
             }
         } catch (err) {
             Swal.fire({
                 icon: 'error',
-                title: 'Update Failed',
-                text: 'Failed to update product. Please try again.',
+                title: 'Cập nhật thất bại',
+                text: 'Không thể cập nhật sản phẩm. Vui lòng thử lại.',
             });
             console.log(err);
-        }
-        finally{
+        } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async () => {
         const result = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Bạn có chắc không?',
+            text: "Bạn sẽ không thể khôi phục lại điều này!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Delete',
-            cancelButtonText: 'Cancel'
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
         });
         
         if (result.isConfirmed) {
@@ -189,8 +188,8 @@ function ProductDetailAdmin() {
                 const response = await productApi.deleteProduct(id, accessToken);                
                 if (response.data.status === 200) {
                     Swal.fire(
-                        'Deleted!',
-                        'Your product has been deleted.',
+                        'Đã xóa!',
+                        'Sản phẩm của bạn đã được xóa.',
                         'success'
                     ).then(() => {
                         navigate(path.allProduct);
@@ -199,18 +198,19 @@ function ProductDetailAdmin() {
             } catch (err) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Delete Failed',
-                    text: 'Failed to delete product. Please try again.',
+                    title: 'Xóa thất bại',
+                    text: 'Không thể xóa sản phẩm. Vui lòng thử lại.',
                 });
                 console.log(err);
-            }
-            finally{
+            } finally {
                 setLoading(false);
             }
         }
     };
+
     if (loading) return <Loading />;
     if (error) return <ErrorAdmin />;
+    
     return ( 
         <>
             <div className="flex">
@@ -219,14 +219,14 @@ function ProductDetailAdmin() {
                     <Navbar />
                     <div className="px-4">
                         <div className="flex justify-between items-center mt-6">
-                            <div className="text-2xl font-semibold">Product Details</div>
-                            <Link to={path.addProductChild(id)} className="px-8 py-3 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]">Add Product Child</Link>
+                            <div className="text-2xl font-semibold">Chi Tiết Sản Phẩm</div>
+                            <Link to={path.addProductChild(id)} className="px-8 py-3 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]">Thêm Sản Phẩm Con</Link>
                         </div>
                         <div className="p-6 rounded-2xl bg-white mt-5">
                             <div className="grid grid-cols-12">
                                 <div className="col-span-6">
                                     <div>
-                                        <div className="font-semibold text-xl">Product Name</div>
+                                        <div className="font-semibold text-xl">Tên Sản Phẩm</div>
                                         <input 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                             type="text" 
@@ -235,7 +235,7 @@ function ProductDetailAdmin() {
                                         />
                                     </div>
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Description</div>
+                                        <div className="font-semibold text-xl">Mô Tả</div>
                                         <textarea 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full min-h-28 text-left leading-6" 
                                             defaultValue={product.description}
@@ -243,7 +243,7 @@ function ProductDetailAdmin() {
                                         />
                                     </div>   
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Category</div>
+                                        <div className="font-semibold text-xl">Thể loại</div>
                                         <select 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full"
                                             value={product.category || ""}
@@ -262,7 +262,7 @@ function ProductDetailAdmin() {
                                     <div className="mt-5">
                                         <div className="flex gap-6">
                                             <div className="w-full">
-                                                <div className="font-semibold text-xl">Cost Price</div>
+                                                <div className="font-semibold text-xl">Giá Gốc</div>
                                                 <input 
                                                     className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                                     type="text" 
@@ -271,7 +271,7 @@ function ProductDetailAdmin() {
                                                 />
                                             </div>
                                             <div className="w-full">
-                                                <div className="font-semibold text-xl">Sale Price</div>
+                                                <div className="font-semibold text-xl">Giá Bán</div>
                                                 <input 
                                                     className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                                     type="text" 
@@ -288,12 +288,12 @@ function ProductDetailAdmin() {
                                         onClick={handleClick}
                                     >
                                         <div className="flex justify-center mb-4">
-                                            <img src={imgInputFile} alt="Upload" />
+                                            <img src={imgInputFile} alt="Tải lên" />
                                         </div>
                                         <p className="text-blue-500 font-semibold mb-2">
-                                            Drop your image here, or browse
+                                            Kéo thả hình ảnh của bạn vào đây, hoặc duyệt
                                         </p>
-                                        <p className="text-gray-500">jpeg, png, svg are allowed</p>
+                                        <p className="text-gray-500">jpeg, png, svg được chấp nhận</p>
                                         <input
                                             type="file"
                                             className="hidden"
@@ -303,12 +303,12 @@ function ProductDetailAdmin() {
                                         />
                                     </div>
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Product Image</div>
+                                        <div className="font-semibold text-xl">Hình Ảnh Sản Phẩm</div>
                                         {image && (
                                             <div className="flex items-center justify-between mt-2 p-3 border rounded-lg bg-[#FAFAFA]">
                                                 <img 
                                                     src={image.url || product.img} 
-                                                    alt={image.name || 'Product Image'} 
+                                                    alt={image.name || 'Hình Ảnh Sản Phẩm'} 
                                                     className="w-16 h-auto object-cover mr-2 rounded-lg"
                                                 />
                                                 <div className="w-full px-3">
@@ -339,14 +339,14 @@ function ProductDetailAdmin() {
                                         )}
                                     </div>
                                     <div className="mt-8 flex justify-between">
-                                        <button onClick={handleUpdate} className="px-8 py-2 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]">Update</button>
-                                        <button onClick={handleDelete} className="px-8 py-2 bg-red-600 rounded-lg text-white hover:bg-red-700">Delete</button>
-                                        <Link to={path.allProduct} className="px-8 py-2 border-2 border-[#232321] rounded-lg text-[#232321] hover:bg-[#f0f0f0]">Cancel</Link>                                    
+                                        <button onClick={handleUpdate} className="px-8 py-2 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]">Cập Nhật</button>
+                                        <button onClick={handleDelete} className="px-8 py-2 bg-red-600 rounded-lg text-white hover:bg-red-700">Xóa</button>
+                                        <Link to={path.allProduct} className="px-8 py-2 border-2 border-[#232321] rounded-lg text-[#232321] hover:bg-[#f0f0f0]">Hủy</Link>                                    
                                     </div>
                                 </div>
                             </div>
                             <div className="border-b my-8"></div>
-                            <div className="font-semibold text-xl">Product Child</div>
+                            <div className="font-semibold text-xl">Sản Phẩm Con</div>
                             <div className="grid grid-cols-12 gap-6 mb-8">
                                 {product.list_child && product.list_child.length > 0 ? (
                                     product.list_child.map((child) => (
@@ -364,10 +364,10 @@ function ProductDetailAdmin() {
                                                         </div>
                                                         <div>
                                                             <div className="font-semibold text-xs">
-                                                                <span className="opacity-75">Cost price:</span> ${child.cost_price}
+                                                                <span className="opacity-75">Giá gốc:</span> ${child.cost_price}
                                                             </div>
                                                             <div className="mt-1 font-semibold text-xs">
-                                                                <span className="opacity-75">Sale price:</span> ${child.selling_price}
+                                                                <span className="opacity-75">Giá bán:</span> ${child.selling_price}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -375,12 +375,12 @@ function ProductDetailAdmin() {
                                                 
                                                 <div className="border rounded-lg p-4">
                                                     <div className="flex justify-between">
-                                                        <div className="text-sm font-medium">Sale</div>
+                                                        <div className="text-sm font-medium">Giảm Giá</div>
                                                         <div className="text-sm opacity-80">{child.sale}</div>
                                                     </div>
                                                     <div className="border-b my-3"></div>
                                                     <div className="flex justify-between">
-                                                        <div className="text-sm font-medium">Remaining Products</div>
+                                                        <div className="text-sm font-medium">Sản Phẩm Còn Lại</div>
                                                         <div className="text-sm opacity-80">{child.quantity}</div>
                                                     </div>
                                                 </div>
@@ -389,7 +389,7 @@ function ProductDetailAdmin() {
                                     ))
                                 ) : (
                                     <div className="col-span-12 text-start text-gray-500">
-                                        No child
+                                        Không có sản phẩm con
                                     </div>
                                 )}
                             </div>

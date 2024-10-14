@@ -10,7 +10,7 @@ function Navbar() {
     const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
     const notificationRef = useRef(null);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [userName, setUserName] = useState(""); // State để lưu tên người dùng
 
     useEffect(() => {
@@ -43,20 +43,22 @@ function Navbar() {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
-    const handleLogout =  () => {
-        clearLS()
-        navigate(path.loginAdmin)
-    }
+    
+    const handleLogout = () => {
+        clearLS();
+        navigate(path.loginAdmin);
+    };
+
     return ( 
         <>
             <div className="bg-white border-b px-14 py-5">
                 <div className="flex justify-end gap-10">
-                    <img src={iconSearch} alt="Search" />
+                    <img src={iconSearch} alt="Tìm kiếm" />
                     <div className="relative inline-block text-left" ref={notificationRef}>
                         <img
                             className="cursor-pointer"
                             src={iconNotifications}
-                            alt="Notifications"
+                            alt="Thông báo"
                             onClick={toggleNotificationDropdown}
                         />
                         {isNotificationDropdownOpen && (
@@ -81,7 +83,7 @@ function Navbar() {
                                 onClick={toggleDropdown}
                                 className="flex items-center space-x-2 text-gray-700"
                             >
-                                <span>{userName.toUpperCase() || "User"}</span> {/* Hiển thị tên người dùng hoặc "User" */}
+                                <span>{userName.toUpperCase() || "Người Dùng"}</span> {/* Hiển thị tên người dùng hoặc "Người Dùng" */}
                                 <svg
                                     className="-mr-1 ml-2 h-5 w-5"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -100,12 +102,12 @@ function Navbar() {
 
                         {isDropdownOpen && (
                             <div className="absolute right-0 z-10 mt-2 w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                                    <button
-                                        className="block w-full px-4 py-2 text-sm hover:bg-[#003F62] hover:text-white rounded"
-                                        onClick={handleLogout}
-                                    >
-                                        Logout
-                                    </button>
+                                <button
+                                    className="block w-full px-4 py-2 text-sm hover:bg-[#003F62] hover:text-white rounded"
+                                    onClick={handleLogout}
+                                >
+                                    Đăng Xuất
+                                </button>
                             </div>
                         )}
                     </div>

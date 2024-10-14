@@ -16,36 +16,36 @@ function ProductDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [accessToken, setAccessToken] = useState("");
-    const [loading, setLoading] = useState(false); // State để quản lý trạng thái tải
-    const [error, setError] = useState(false); // State để lưu trữ lỗi
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
     const { isAuthenticated, role } = useAuth();
     const [quantity, setQuantity] = useState(1);
     const [hoveredImage, setHoveredImage] = useState('');
     const [product, setProduct] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState(null);
+
     useEffect(() => {
         const token = getAccessTokenFromLS();
         setAccessToken(token);
     }, []);
+
     const handleImageHover = (image) => {
         setHoveredImage(image);
     };
 
     useEffect(() => {
         const fetchProductDetails = async () => {
-            setLoading(true)
+            setLoading(true);
             try {
                 const response = await userApi.getProductDetail(id);
-                console.log(response);
-                
-                const data = response.data.data.currentProduct;                ;
+                const data = response.data.data.currentProduct;
                 setProduct(data);
-                setRelatedProducts(response.data.data.relatedProducts)
+                setRelatedProducts(response.data.data.relatedProducts);
                 if (data.list_child && data.list_child.length > 0) {
                     setHoveredImage(data.list_child[0].img);
                 }
             } catch (error) {
-                console.error('Error fetching product details:', error);
+                console.error('Lỗi khi lấy chi tiết sản phẩm:', error);
             } finally {
                 setLoading(false);
             }
@@ -61,17 +61,14 @@ function ProductDetail() {
             const selectedChild = product.list_child.find(child => child.selected);
             if (selectedChild) {
                 try {
-                    setLoading(true)
+                    setLoading(true);
                     const response = await userApi.addToCart(selectedChild.id, quantity, accessToken);
-                    console.log(response);
-                    
                     if (response.data.status === 200) {
                         Swal.fire({
-                            title: 'Success!',
-                            text: 'Product added successfully.',
+                            title: 'Thành công!',
+                            text: 'Sản phẩm đã được thêm vào giỏ hàng.',
                             icon: 'success',
                         }).then(() => {
-                            // Reset lại quantity và bỏ chọn selected child
                             setQuantity(1);
                             const updatedList = product.list_child.map(child => ({
                                 ...child,
@@ -80,27 +77,26 @@ function ProductDetail() {
                             setProduct({ ...product, list_child: updatedList });
                         });
                     }
-                    if(response.data.status === 400){
+                    if (response.data.status === 400) {
                         Swal.fire({
-                            title: 'Error!',
+                            title: 'Lỗi!',
                             html: `
-                                ${response.data.message ? response.data.message + '<br>':''} 
+                                ${response.data.message ? response.data.message + '<br>' : ''}
                             `,
                             icon: 'error',
-                            confirmButtonText: 'Try Again',
+                            confirmButtonText: 'Thử lại',
                         });
                     }
                 } catch (error) {
-                    setError(true)
-                }
-                finally{
-                    setLoading(false)
+                    setError(true);
+                } finally {
+                    setLoading(false);
                 }
             } else {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'No Selection!',
-                    text: 'Please select a product option before adding to cart.',
+                    title: 'Chưa chọn!',
+                    text: 'Vui lòng chọn tùy chọn sản phẩm trước khi thêm vào giỏ hàng.',
                     confirmButtonText: 'OK'
                 });
             }
@@ -108,7 +104,7 @@ function ProductDetail() {
     };    
 
     if (loading) return <Loading />;
-    if (!product) return <div>Product not found.</div>;
+    if (!product) return <div>Không tìm thấy sản phẩm.</div>;
 
     return ( 
         <>
@@ -117,33 +113,33 @@ function ProductDetail() {
                 <div className="grid grid-cols-12 gap-16">
                     <div className="col-span-7">
                         <div className="flex justify-between">
-                        <div className='gap-6 flex flex-col'>
-                        {product.list_child.map((item, index) => (
-                            <div key={index} className={`bg-[#F5F5F5] rounded cursor-pointer ${item.selected ? 'border-2 border-[#DB4444]' : ''}`}>
+                            <div className='gap-6 flex flex-col'>
+                                {product.list_child.map((item, index) => (
+                                    <div key={index} className={`bg-[#F5F5F5] rounded cursor-pointer ${item.selected ? 'border-2 border-[#DB4444]' : ''}`}>
+                                        <img 
+                                            className="max-w-32 max-h-28 px-6 py-3" 
+                                            src={item.img} 
+                                            alt={item.name} 
+                                            onMouseEnter={() => handleImageHover(item.img)} 
+                                            onClick={() => {
+                                                const updatedList = product.list_child.map(child => ({
+                                                    ...child,
+                                                    selected: child.id === item.id 
+                                                }));
+                                                setProduct({ ...product, list_child: updatedList });
+                                                setHoveredImage(item.img);
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="bg-[#F5F5F5] rounded w-4/5 flex items-center">
                                 <img 
-                                    className="max-w-32 max-h-28 px-6 py-3" 
-                                    src={item.img} 
-                                    alt={item.name} 
-                                    onMouseEnter={() => handleImageHover(item.img)} 
-                                    onClick={() => {
-                                        const updatedList = product.list_child.map(child => ({
-                                            ...child,
-                                            selected: child.id === item.id 
-                                        }));
-                                        setProduct({ ...product, list_child: updatedList });
-                                        setHoveredImage(item.img); // Update hovered image on selection
-                                    }}
+                                    className='max-w-md max-h-80 min-w-md min-h-80 mx-auto' 
+                                    src={hoveredImage} 
+                                    alt="" 
                                 />
                             </div>
-                        ))}
-                    </div>
-                    <div className="bg-[#F5F5F5] rounded w-4/5 flex items-center">
-                        <img 
-                            className='max-w-md max-h-80 min-w-md min-h-80 mx-auto' 
-                            src={hoveredImage} 
-                            alt="" 
-                        />
-                    </div>
                         </div>
                     </div>
                     <div className="col-span-4">
@@ -172,8 +168,7 @@ function ProductDetail() {
                                                 selected: child.id === item.id 
                                             }));
                                             setProduct({ ...product, list_child: updatedList });
-                                        setHoveredImage(item.img); // Update hovered image on selection
-
+                                            setHoveredImage(item.img);
                                         }}
                                     >
                                         {item.feature_name}
@@ -192,7 +187,7 @@ function ProductDetail() {
                                 >
                                     -
                                 </button>
-                                <div className='text-xl font-medium  w-16 h-full border-black border flex items-center justify-center'>
+                                <div className='text-xl font-medium w-16 h-full border-black border flex items-center justify-center'>
                                     {quantity}
                                 </div>
                                 <button 
@@ -210,7 +205,7 @@ function ProductDetail() {
                                 hover:bg-[#DB4444] hover:text-white hover:border-[#DB4444]                                    
                                 cursor-pointer group'
                                 onClick={handleAddToCart}>
-                                  <span className='mr-2'>Add to Cart</span>  
+                                <span className='mr-2'>Thêm vào giỏ hàng</span>  
                                 <FontAwesomeIcon 
                                     icon={faShoppingCart} 
                                     className='w-5 h-5 p-1 text-black group-hover:text-white' 
@@ -223,10 +218,10 @@ function ProductDetail() {
             <div className="container mx-auto my-20">
                 <div className="flex gap-5 items-center">
                     <div className="w-4 h-8 bg-[#da4445] rounded-sm"></div>
-                    <div className="text-[#da4445] font-semibold">Related Item</div>
+                    <div className="text-[#da4445] font-semibold">Sản phẩm liên quan</div>
                 </div>
                 <div className="mt-6">
-                    <div className="font-inter text-3xl font-semibold">Explore Our Products</div>
+                    <div className="font-inter text-3xl font-semibold">Khám phá sản phẩm của chúng tôi</div>
                     <div className="mt-8">
                         <ProductSlider products={relatedProducts} />
                     </div>

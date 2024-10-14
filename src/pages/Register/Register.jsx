@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import bgLogin from "../../assets/Login/bg-login.svg";
 import path from "../../constants/path";
@@ -17,8 +17,8 @@ function Register() {
         // Kiểm tra xem các trường có trống không
         if (!name || (!email && !phone) || !password) {
             Swal.fire({
-                title: 'Warning!',
-                text: 'Please fill in all fields.',
+                title: 'Cảnh báo!',
+                text: 'Vui lòng điền đầy đủ thông tin.',
                 icon: 'warning',
                 confirmButtonText: 'OK',
             });
@@ -26,24 +26,24 @@ function Register() {
         }
 
         try {
-            const response = await userApi.registerAccount( name, email, phone, password );
+            const response = await userApi.registerAccount(name, email, phone, password);
             console.log(response);
             if (response.data.status === 200) {
                 Swal.fire({
-                    title: 'Success!',
-                    text: 'Your account has been created successfully.',
+                    title: 'Thành công!',
+                    text: 'Tài khoản của bạn đã được tạo thành công.',
                     icon: 'success',
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    setName("")
-                    setEmail("")
-                    setPhone("")
-                    setPassword("")
+                    setName("");
+                    setEmail("");
+                    setPhone("");
+                    setPassword("");
                 });
             } else if (response.data.status === 422) {
                 Swal.fire({
-                    title: 'Error!',
+                    title: 'Lỗi!',
                     html: `
                         ${response.data.message.name ? response.data.message.name + '<br>' : ''}
                         ${response.data.message.email ? response.data.message.email + '<br>' : ''}
@@ -51,16 +51,16 @@ function Register() {
                         ${response.data.message.password ? response.data.message.password + '<br>' : ''}
                     `,
                     icon: 'error',
-                    confirmButtonText: 'Try Again',
+                    confirmButtonText: 'Thử lại',
                 });
             }
         } catch (error) {
             // Hiển thị thông báo lỗi
             Swal.fire({
-                title: 'Error!',
-                text: 'Registration failed. Please try again later.',
+                title: 'Lỗi!',
+                text: 'Đăng ký không thành công. Vui lòng thử lại sau.',
                 icon: 'error',
-                confirmButtonText: 'Try Again',
+                confirmButtonText: 'Thử lại',
             });
         }
     };
@@ -74,16 +74,16 @@ function Register() {
                     </div>
                     <div className="col-span-5 col-start-8">
                         <div className="text-4xl font-medium">
-                            Create an account
+                            Đăng ký
                         </div>
                         <div className="text-base mt-4">
-                            Enter your details below
+                            Nhập thông tin của bạn bên dưới
                         </div>
                         <form onSubmit={handleRegister} className="mt-10 w-3/5">
                             <input 
                                 className="border-b-2 p-2 w-full outline-none" 
                                 type="text" 
-                                placeholder="Name" 
+                                placeholder="Họ và Tên" 
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
@@ -97,26 +97,26 @@ function Register() {
                             <input 
                                 className="border-b-2 p-2 w-full mt-8 outline-none" 
                                 type="text" 
-                                placeholder="Phone Number" 
+                                placeholder="Số Điện Thoại" 
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
                             />
                             <input 
                                 className="border-b-2 p-2 w-full mt-8 outline-none" 
                                 type="password" 
-                                placeholder="Password" 
+                                placeholder="Mật Khẩu" 
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                             <div className="mt-5">
                                 <button className="w-full py-3 bg-[#DB4444] hover:bg-red-700 focus:bg-red-700 text-white rounded" type="submit">
-                                    Create Account
+                                    Đăng ký
                                 </button>
                             </div>
                             <div className="text-center mt-5 opacity-70">
-                                Already have an account? 
+                                Bạn đã có tài khoản? 
                                 <span className="text-[#DB4444] hover:underline ms-1">
-                                    <Link to={path.login}>Log in</Link>
+                                    <Link to={path.login}>Đăng Nhập</Link>
                                 </span>
                             </div>
                         </form>

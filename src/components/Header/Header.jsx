@@ -6,19 +6,20 @@ import { clearLS, getAccessTokenFromLS } from '../../utils/auth';
 import { useEffect, useState } from 'react';
 import userApi from '../../api/userApi';
 import Swal from 'sweetalert2';
-import imgUser from "../../assets/Header/user.svg"
+import imgUser from "../../assets/Header/user.svg";
+
 function Header() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const location = useLocation();
     const [quantityCart, setQuantityCart] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const token = getAccessTokenFromLS(); // Lấy token một lần để sử dụng nhiều lần
 
     useEffect(() => {
-        const token = getAccessTokenFromLS();
         if (token) {
             fetchCartItems(token);
         }
-    }, []);
+    }, [token]);
 
     const fetchCartItems = async (token) => {
         try {
@@ -34,18 +35,18 @@ function Header() {
 
     const handleLogout = () => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You will be logged out!",
+            title: 'Bạn có chắc không?',
+            text: "Bạn sẽ bị đăng xuất!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#DB4444',
             cancelButtonColor: '#f0ad4e',
-            confirmButtonText: 'Yes, log me out!',
-            cancelButtonText: 'Cancel'
+            confirmButtonText: 'Có, đăng xuất!',
+            cancelButtonText: 'Hủy'
         }).then((result) => {
             if (result.isConfirmed) {
-                clearLS()
-                navigate(path.login)
+                clearLS();
+                navigate(path.login);
             }
         });
     };
@@ -60,22 +61,17 @@ function Header() {
                     <div className="flex gap-12">
                         <Link to={path.home}>
                             <div className={`relative ${location.pathname === path.home ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:-translate-y-1 after:mt-1' : ''}`}>
-                                Home
+                                Trang Chủ
                             </div>
                         </Link>
-                        {/* <Link to={path.contact}>
-                            <div className={`relative ${location.pathname === path.contact ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:-translate-y-1 after:mt-1' : ''}`}>
-                                Contact
-                            </div>
-                        </Link> */}
                         <Link to={path.about}>
                             <div className={`relative ${location.pathname === path.about ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:-translate-y-1 after:mt-1' : ''}`}>
-                                About
+                                Giới Thiệu
                             </div>
                         </Link>
-                        <Link to={path.login}>
+                        <Link to={path.register}>
                             <div className={`relative ${location.pathname === path.login ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:-translate-y-1 after:mt-1' : ''}`}>
-                                Signup
+                                Đăng Ký
                             </div>
                         </Link>
                     </div>
@@ -83,41 +79,45 @@ function Header() {
                         <div className="relative">
                             <img 
                                 src={iconSearch}
-                                alt="search icon" 
-                                className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4" 
+                                alt="Tìm kiếm" 
+                                className="absolute left-2 top-[40%] transform -translate-y-1/2 w-4 h-4" 
                             />
                             <input 
                                 className='py-2 px-10 bg-[#F5F5F5] rounded text-xs' 
                                 type="text" 
-                                placeholder="What are you looking for?" 
+                                placeholder="Bạn đang tìm gì?" 
                             />
                         </div>
                         <div className='cursor-pointer relative'>
                             <Link to={path.cart}>
-                                <img src={iconCart} alt="Cart" />
+                                <img src={iconCart} alt="Giỏ hàng" />
                                 <div className='absolute px-1 text-white bg-red-600 left-[-5%] top-[-10%] rounded-full text-[9px] font-semibold'>{quantityCart}</div>
                             </Link>
-                            {/* Dropdown Menu */}
-                            
                         </div>
                         <div className="relative">
-                                <button onClick={() => setDropdownOpen(!dropdownOpen)}>
-                                    <div className="">
-                                        <img src={imgUser} alt="" />
-                                    </div>
-                                </button>
-                                {dropdownOpen && (
-                                    <div className="absolute right-0 bg-white shadow-md rounded mt-2 z-10 w-40">
-                                        <Link to={path.historyOrder} className="block px-4 py-2 text-sm text-black hover:bg-gray-200">History Order</Link>
-                                        <button 
-                                            onClick={handleLogout} 
-                                            className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-200"
-                                        >
-                                            Logout
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
+                            <button onClick={() => setDropdownOpen(!dropdownOpen)}>
+                                <div>
+                                    <img src={imgUser} alt="Tài khoản" />
+                                </div>
+                            </button>
+                            {dropdownOpen && (
+                                <div className="absolute right-0 bg-white shadow-md rounded mt-2 z-10 w-40">
+                                    {token ? (
+                                        <>
+                                            <Link to={path.historyOrder} className="block px-4 py-2 text-sm text-black hover:bg-gray-200">Lịch Sử Đặt Hàng</Link>
+                                            <button 
+                                                onClick={handleLogout} 
+                                                className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-200"
+                                            >
+                                                Đăng Xuất
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <Link to={path.login} className="block px-4 py-2 text-sm text-black hover:bg-gray-200">Đăng Nhập</Link>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

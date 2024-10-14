@@ -13,6 +13,7 @@ import { formatDate } from "../../utils/utils";
 function OrderList() {
     const [loading, setLoading] = useState(false);
     const [orders, setOrders] = useState([]);
+    
     useEffect(() => {
         const token = getAccessTokenFromLS();
         if (token) {
@@ -25,12 +26,8 @@ function OrderList() {
             setLoading(true);
             const response = await adminApi.getOrders(token);
             console.log(response.data.data.data);
-            if(response.data.status === 200){                
-                setOrders(response.data.data.data);
-            }
-            
             if (response.data.status === 200) {                
-                         
+                setOrders(response.data.data.data);
             }
         } catch (err) {
             setError(true);
@@ -38,7 +35,9 @@ function OrderList() {
             setLoading(false);
         }
     };
-    if(loading) return <Loading/>
+
+    if (loading) return <Loading />;
+    
     return ( 
         <>
         <div className="flex">
@@ -46,29 +45,28 @@ function OrderList() {
             <div className="w-full bg-[#E7E7E3]">
                 <Navbar />
                 <div className="px-4">
-                    <div className="text-2xl mt-6">Order List</div>
+                    <div className="text-2xl mt-6">Danh Sách Đơn Hàng</div>
                     <div className="mt-8 px-4 py-6 bg-[#F8F8F8] rounded-2xl">
-                        <div className="font-semibold text-xl">Recent Purchases</div>
+                        <div className="font-semibold text-xl">Mua Gần Đây</div>
                         <div className="border-b my-4"></div>
                         <div className="overflow-x-auto">
                             <table className="min-w-full">
                                 <thead>
                                     <tr className="text-sm leading-normal border-b">
-                                        <th className="pb-3 text-left opacity-60">
-                                        </th>
-                                        <th className="pb-3 text-left opacity-60">Index</th>
-                                        <th className="pb-3 text-left opacity-60">Order ID</th>
-                                        <th className="pb-3 text-left opacity-60">Date</th>
-                                        <th className="pb-3 text-left opacity-60">Customer Name</th>
-                                        <th className="pb-3 text-left opacity-60">Status</th>
-                                        <th className="pb-3 text-left opacity-60">Amount</th>
+                                        <th className="pb-3 text-left opacity-60"></th>
+                                        <th className="pb-3 text-left opacity-60">STT</th>
+                                        <th className="pb-3 text-left opacity-60">Mã Đơn Hàng</th>
+                                        <th className="pb-3 text-left opacity-60">Ngày</th>
+                                        <th className="pb-3 text-left opacity-60">Tên Khách Hàng</th>
+                                        <th className="pb-3 text-left opacity-60">Trạng Thái</th>
+                                        <th className="pb-3 text-left opacity-60">Số Tiền</th>
                                     </tr>
                                 </thead>
                                 <tbody className="text-[#000000] text-sm font-semibold opacity-80">
                                     {orders.map((item, index) => (
                                         <tr key={index} className="border-b border-gray-200 hover:bg-gray-300">
                                             <td className="py-3 text-center">
-                                                <Link to={path.orderList +  `/${item.id}`} >
+                                                <Link to={path.orderList + `/${item.id}`} >
                                                     <FontAwesomeIcon icon={faEye} className="cursor-pointer" />
                                                 </Link>
                                             </td>
@@ -77,20 +75,21 @@ function OrderList() {
                                             <td className="py-3">{formatDate(item.created_at)}</td>
                                             <td className="py-3">{item.address.name}</td>
                                             <td className="py-3 flex items-center">
-                                        <span className={`w-2 h-2 rounded-full mr-2 ${
-                                            item.status === 1 ? 'bg-yellow-500' :
-                                            item.status === 5 ? 'bg-red-500' :
-                                            item.status === 4 ? 'bg-green-500' :
-                                            item.status === 3 ? 'bg-blue-500' :
-                                            'bg-gray-500'}`}>
-                                        </span>
-                                        {
-                                            item.status === 1 ? 'Pending' :
-                                            item.status === 5 ? 'Cancel' :
-                                            item.status === 4 ? 'Success' :
-                                            item.status === 3 ? 'Shipping' :
-                                            'Pended'}
-                                    </td>                                            
+                                                <span className={`w-2 h-2 rounded-full mr-2 ${
+                                                    item.status === 1 ? 'bg-yellow-500' :
+                                                    item.status === 5 ? 'bg-red-500' :
+                                                    item.status === 4 ? 'bg-green-500' :
+                                                    item.status === 3 ? 'bg-blue-500' :
+                                                    'bg-gray-500'}`}>
+                                                </span>
+                                                {
+                                                    item.status === 1 ? 'Đang Chờ' :
+                                                    item.status === 5 ? 'Đã Hủy' :
+                                                    item.status === 4 ? 'Thành Công' :
+                                                    item.status === 3 ? 'Đang Giao' :
+                                                    'Tạm Dừng'
+                                                }
+                                            </td>                                            
                                             <td className="py-3">${item.total_price}</td>
                                         </tr>
                                     ))}
@@ -102,7 +101,7 @@ function OrderList() {
             </div>
         </div>
         </>
-     );
+    );
 }
 
 export default OrderList;

@@ -13,8 +13,8 @@ import ErrorAdmin from "../ErrorAdmin/ErrorAdmin";
 function ProductChildDetail() {
     const { id } = useParams();
     const [accessToken, setAccessToken] = useState("");
-    const [loading, setLoading] = useState(false); // State để quản lý trạng thái tải
-    const [error, setError] = useState(null); // State để lưu trữ lỗi
+    const [loading, setLoading] = useState(false); // Trạng thái tải
+    const [error, setError] = useState(null); // Lỗi
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
     const [image, setImage] = useState(null);
@@ -38,13 +38,14 @@ function ProductChildDetail() {
         } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Error!',
-                text: 'Access token not found.',
+                title: 'Lỗi!',
+                text: 'Không tìm thấy mã truy cập.',
             });
         }
     }, [id]);
+
     const fetchProductChildDetail = async (token) => {
-        setLoading(true)
+        setLoading(true);
         try {
             const response = await productApi.getProductChildDetail(id, token);
             const data = response.data.data;
@@ -62,11 +63,10 @@ function ProductChildDetail() {
                 selling_price: data.selling_price,
                 quantity: data.quantity,
             });
-            setImage({ url: data.img, name: data.feature_name }); // Giả sử API trả về trường image
+            setImage({ url: data.img, name: data.feature_name }); // Giả sử API trả về trường hình ảnh
         } catch (error) {
-            setError(true)
-        }
-        finally{
+            setError(true);
+        } finally {
             setLoading(false);
         }
     };
@@ -77,7 +77,6 @@ function ProductChildDetail() {
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        setFileImage(file)
         setFileImage(file);
         if (!file) return;
 
@@ -124,8 +123,8 @@ function ProductChildDetail() {
         if (!feature_name || !cost_price || !selling_price || !quantity || !image) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Incomplete Information',
-                text: 'Please fill in all fields and upload an image.',
+                title: 'Thông tin chưa đầy đủ',
+                text: 'Vui lòng điền tất cả các trường và tải lên hình ảnh.',
             });
             return false;
         }
@@ -137,14 +136,15 @@ function ProductChildDetail() {
             key !== "product_id" && productData[key] !== initialProductData[key]
         ) || (fileImage !== null); // Kiểm tra xem có file hình ảnh mới không
     };
+
     const handleUpdateProductChild = async () => {
         if (!validateForm()) return;
         
         if (!hasChanges()) {
             Swal.fire({
                 icon: 'info',
-                title: 'No Changes Detected',
-                text: 'Please modify at least one field before updating.',
+                title: 'Không có thay đổi',
+                text: 'Vui lòng sửa đổi ít nhất một trường trước khi cập nhật.',
             });
             return;
         }
@@ -170,37 +170,36 @@ function ProductChildDetail() {
         }
         
         try {
-            setLoading(true)
+            setLoading(true);
             const response = await productApi.editProductChild(data, accessToken);
             console.log(response);
             
             if (response.data.status === 200) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Success!',
-                    text: 'Product child updated successfully.',
+                    title: 'Thành công!',
+                    text: 'Sản phẩm con đã được cập nhật.',
                 }).then(() => {
                     navigate(`${path.allProduct}/${productData.product_id}`);
                 });
             }
         } catch (error) {
-            setError(true)
-        }
-        finally{
-            setLoading(false)
+            setError(true);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDeleteProductChild = async () => {
         const result = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Bạn có chắc không?',
+            text: "Bạn sẽ không thể khôi phục lại điều này!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Delete',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
         });
 
         if (result.isConfirmed) {
@@ -208,20 +207,21 @@ function ProductChildDetail() {
             try {
                 const response = await productApi.deleteProductChild(id, accessToken);
                 if (response.status === 200) {
-                    Swal.fire('Deleted!', 'Product child has been deleted.', 'success').then(() => {
+                    Swal.fire('Đã xóa!', 'Sản phẩm con đã được xóa.', 'success').then(() => {
                         navigate(`${path.allProduct}/${productData.product_id}`);
                     });
                 }
             } catch (error) {
-                setError(true)
-            }
-            finally{
-                setLoading(false)
+                setError(true);
+            } finally {
+                setLoading(false);
             }
         }
     };
+
     if (loading) return <Loading />; // Hiển thị loading khi đang tải
     if (error) return <ErrorAdmin />; // Hiển thị lỗi nếu có
+
     return (
         <>
             <div className="flex">
@@ -229,12 +229,12 @@ function ProductChildDetail() {
                 <div className="w-full bg-[#E7E7E3]">
                     <Navbar />
                     <div className="px-4">
-                        <div className="text-2xl mt-6 font-semibold">Product Child Detail</div>
+                        <div className="text-2xl mt-6 font-semibold">Chi Tiết Sản Phẩm Con</div>
                         <div className="p-6 rounded-2xl bg-white mt-5">
                             <div className="grid grid-cols-12">
                                 <div className="col-span-6">
                                     <div>
-                                        <div className="font-semibold text-xl">Feature Name</div>
+                                        <div className="font-semibold text-xl">Tên Tính Năng</div>
                                         <input 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                             type="text" 
@@ -245,7 +245,7 @@ function ProductChildDetail() {
                                         />
                                     </div>
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Cost Price</div>
+                                        <div className="font-semibold text-xl">Giá Gốc</div>
                                         <input 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                             type="number" 
@@ -256,7 +256,7 @@ function ProductChildDetail() {
                                         />
                                     </div>
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Selling Price</div>
+                                        <div className="font-semibold text-xl">Giá Bán</div>
                                         <input 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                             type="number" 
@@ -267,7 +267,7 @@ function ProductChildDetail() {
                                         />
                                     </div>
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Quantity</div>
+                                        <div className="font-semibold text-xl">Số Lượng</div>
                                         <input 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                             type="number" 
@@ -284,12 +284,12 @@ function ProductChildDetail() {
                                         onClick={handleClick}
                                     >
                                         <div className="flex justify-center mb-4">
-                                            <img src={imgInputFile} alt="Upload" />
+                                            <img src={imgInputFile} alt="Tải lên" />
                                         </div>
                                         <p className="text-blue-500 font-semibold mb-2">
-                                            Drop your image here, or browse
+                                            Kéo thả hình ảnh của bạn vào đây, hoặc duyệt
                                         </p>
-                                        <p className="text-gray-500">jpeg, png, svg are allowed</p>
+                                        <p className="text-gray-500">jpeg, png, svg được chấp nhận</p>
                                         <input
                                             type="file"
                                             className="hidden"
@@ -299,7 +299,7 @@ function ProductChildDetail() {
                                         />
                                     </div>
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Product Image</div>
+                                        <div className="font-semibold text-xl">Hình Ảnh Sản Phẩm</div>
                                         {image && (
                                             <div className="flex items-center justify-between mt-2 p-3 border rounded-lg bg-[#FAFAFA]">
                                                 <img 
@@ -339,15 +339,15 @@ function ProductChildDetail() {
                                             onClick={handleUpdateProductChild} 
                                             className="px-8 py-2 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]"
                                         >
-                                            Update
+                                            Cập Nhật
                                         </button>
                                         <button 
                                             onClick={handleDeleteProductChild} 
                                             className="px-8 py-2 bg-red-600 rounded-lg text-white hover:bg-red-700"
                                         >
-                                            Delete
+                                            Xóa
                                         </button>
-                                        <Link to={`${path.allProduct}/${productData.product_id}`} className="px-8 py-2 border-2 border-[#232321] rounded-lg text-[#232321] hover:bg-[#f0f0f0]">Cancel</Link>
+                                        <Link to={`${path.allProduct}/${productData.product_id}`} className="px-8 py-2 border-2 border-[#232321] rounded-lg text-[#232321] hover:bg-[#f0f0f0]">Hủy</Link>
                                     </div>
                                 </div>
                             </div>
