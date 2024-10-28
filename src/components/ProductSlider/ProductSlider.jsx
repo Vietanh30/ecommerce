@@ -19,7 +19,7 @@ function ProductSlider({products}) {
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 3,
+          slidesToShow: products.length < 3? products.length: 3,
         },
       },
       {
