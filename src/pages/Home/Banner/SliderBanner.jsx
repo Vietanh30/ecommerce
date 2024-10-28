@@ -24,16 +24,16 @@ function SliderBanner() {
     
     return (
         // <Slider {...settings}>
-        <div className="bg-black lg:col-span-4 col-span-1 flex flex-col lg:flex-row justify-between items-center px-5" >
+        <div className="bg-black lg:col-span-4 col-span-1 flex flex-col lg:flex-row justify-between items-center px-5 rounded-lg" >
             <div className="text-white space-y-5 lg:ms-16 lg:w-2/3">
                 <div className="flex items-center gap-5" data-aos="fade-left">
                     <img src={apple} alt="Logo Apple" />
                     <span>Series iPhone 14</span>
                 </div>
-                <div className="text-4xl lg:text-5xl font-semibold" data-aos="fade-left">
+                <div className="text-4xl lg:text-5xl font-semibold" >
                     Giảm đến 10% Voucher
                 </div>
-                <div className="flex gap-5 cursor-pointer" data-aos="fade-left">
+                <div className="flex gap-5 cursor-pointer">
                     <span className="border-b">Mua Ngay</span>
                     <img src={iconArrowRight} alt="Mũi tên sang phải" />
                 </div>

@@ -13,6 +13,11 @@
 
 /* Custom container styles */
 @layer utilities {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px; /* Thay 80px bằng chiều cao thực tế của header */
+  }
+
   .container {
     width: 100%;
   }

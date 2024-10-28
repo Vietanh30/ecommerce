@@ -10,7 +10,7 @@ function FlashSales({ flashSale }) {
     }, []);
 
     return ( 
-        <div className="container mx-auto mt-20" data-aos="fade-up">
+        <div className="container mx-auto mt-20" data-aos="fade-up" id="flash-sale">
             <div className="flex gap-5 items-center" data-aos="fade-right">
                 <div className="w-4 h-8 bg-[#da4445] rounded-sm"></div>
                 <div className="text-[#da4445] font-semibold">Hôm Nay</div>

@@ -69,7 +69,7 @@ function Home() {
             <Categories categories={categories} />
             <BestSelling bestSale={bestSale}/>
             <div className="container mx-auto mt-20">
-                <div className="bg-[#000] grid grid-cols-12 max-h-[500px] items-center justify-center py-10" data-aos="fade-up">
+                <div className="bg-[#000] grid grid-cols-12 max-h-[500px] items-center justify-center py-10 rounded-lg" data-aos="fade-up">
                     <div className="col-span-4 col-start-2">
                         <div className="text-[#0F6] font-semibold">Danh Mục</div>
                         <div className="mt-8 text-5xl text-white leading-tight">Nâng Cao Trải Nghiệm Âm Nhạc Của Bạn</div>
@@ -116,7 +116,7 @@ function Home() {
                         <ProductSlider products={products} />
                     </div>
                     <div className="flex justify-center mt-16">
-                        <button className="text-[#FAFAFA] bg-[#DB4444] hover:bg-red-600 py-4 px-12 rounded">Xem Tất Cả Sản Phẩm</button>
+                        <button className="text-[#FAFAFA] bg-[#DB4444] hover:bg-red-600 py-4 px-12 rounded-lg">Xem Tất Cả Sản Phẩm</button>
                     </div>
                 </div>
             </div>
@@ -129,7 +129,7 @@ function Home() {
                 <div className="mt-6">
                     <div className="font-inter text-3xl font-semibold">Sản Phẩm Mới</div>
                     <div className="mt-8 grid grid-cols-2 gap-8">
-                        <div className="col-span-1 relative bg-[#000] px-7 pt-16 rounded" data-aos="fade-up">
+                        <div className="col-span-1 relative bg-[#000] px-7 pt-16 rounded-lg" data-aos="fade-up">
                             <img className="mx-auto" src={ps5} alt="" />
                             <div className="absolute bottom-[10%]">
                                 <div className="text-white font-inter text-2xl">PlayStation 5</div>
@@ -138,7 +138,7 @@ function Home() {
                             </div>
                         </div>
                         <div className="col-span-1 flex flex-col gap-7 justify-between">
-                            <div className="relative flex items-end justify-between bg-[#0D0D0D] rounded" data-aos="fade-up">
+                            <div className="relative flex items-end justify-between bg-[#0D0D0D] rounded-lg" data-aos="fade-up">
                                 <div className="ps-6 pb-6">
                                     <div className="text-white font-inter text-2xl">Bộ Sưu Tập Phụ Nữ</div>
                                     <div className="text-sm text-[#dfdada] mt-4">Bộ sưu tập phụ nữ nổi bật mang đến cho bạn một phong cách mới.</div>
@@ -147,7 +147,7 @@ function Home() {
                                 <img src={women} alt="" />
                             </div>
                             <div className="flex gap-7">
-                                <div className="relative bg-[#000] pt-16 rounded" data-aos="fade-up">
+                                <div className="relative bg-[#000] pt-16 rounded-lg" data-aos="fade-up">
                                     <img className="mx-auto px-14" src={speaker} alt="" />
                                     <div className="absolute left-[10%] bottom-[10%]">
                                         <div className="text-white font-inter text-2xl">Loa</div>
@@ -155,7 +155,7 @@ function Home() {
                                         <div className="underline text-white mt-2">Mua Ngay</div>
                                     </div>
                                 </div>
-                                <div className="relative bg-[#000] pt-16 rounded" data-aos="fade-up">
+                                <div className="relative bg-[#000] pt-16 rounded-lg" data-aos="fade-up">
                                     <img className="mx-auto px-14" src={perfume} alt="" />
                                     <div className="absolute left-[10%] bottom-[10%]">
                                         <div className="text-white font-inter text-2xl">Nước Hoa</div>
@@ -169,7 +169,12 @@ function Home() {
                 </div>
             </div>
 
-            <div className="container mx-auto my-24">
+            <div className="container mx-auto my-24" >
+                <div className="flex gap-5 items-center">
+                    <div className="w-4 h-8 bg-[#da4445] rounded-sm"></div>
+                    <div className="text-[#da4445] font-semibold">Ưu đãi</div>
+                </div>
+                <h2 className="text-2xl font-semibold my-6" data-aos="fade-up">Ưu Đãi Của Chúng Tôi</h2>
                 <div className="flex justify-center">
                     <div className="flex gap-44">
                         <div data-aos="fade-up">
@@ -188,6 +193,26 @@ function Home() {
                             <div className="text-sm mt-2 text-center">Chúng tôi hoàn lại tiền trong vòng 30 ngày</div>
                         </div>
                     </div>    
+                </div>
+            </div>
+            <div className="container mx-auto my-24" id="location">
+                <div className="flex gap-5 items-center">
+                    <div className="w-4 h-8 bg-[#da4445] rounded-sm"></div>
+                    <div className="text-[#da4445] font-semibold">Ví trí</div>
+                </div>
+                <h2 className="text-2xl font-semibold my-6" data-aos="fade-up">Vị trí Của Chúng Tôi</h2>
+                <div className="w-full rounded-lg"  >
+                    <iframe
+                    className="w-full rounded-lg"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.2924013039187!2d105.78484157490117!3d20.98091298065643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135accdd8a1ad71%3A0xa2f9b16036648187!2zSOG7jWMgdmnhu4duIEPDtG5nIG5naOG7hyBCxrB1IGNow61uaCB2aeG7hW4gdGjDtG5n!5e0!3m2!1svi!2s!4v1728979930171!5m2!1svi!2s"
+                    width="600"
+                    height="450"
+                    style={{ border: 0 }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    >
+                    </iframe>
                 </div>
             </div>
             <Footer />

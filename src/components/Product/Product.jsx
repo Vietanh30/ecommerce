@@ -7,7 +7,7 @@ import path from '../../constants/path';
 function Product({product}) {  
   return (
     <Link to={`${path.products}/${product.id}`} className="group block cursor-pointer z-0">
-      <div className='bg-[#F5F5F5] relative py-12 flex justify-center mr-7 transition-transform duration-300 group-hover:scale-105'>
+      <div className='bg-[#F5F5F5] relative py-12 flex justify-center mr-7 transition-transform duration-300 group-hover:scale-105 rounded-lg'>
         <img className='transition-transform duration-300 group-hover:scale-110 w-36 h-36' src={product.img} alt="Headphone" />
         {/* <div className='bg-black absolute bottom-0 w-full text-white py-2 text-center z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
           Add to Cart

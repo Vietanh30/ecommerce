@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import userApi from "../../api/userApi";
 import Loading from "../Loading/Loading";
 import Swal from "sweetalert2";
+import Error from "../../pages/Error/Error";
 
 function Cart() {
     const navigate = useNavigate();
@@ -54,38 +55,35 @@ function Cart() {
                 quantity: item.quantity
             }));
             console.log(updatedItems);
-            
             // const response = await userApi.updateCart(updatedItems, accessToken);
             // console.log(response);
-            
             // if (response.data.status === 200) {
-            //     fetchCartItems(accessToken); // Refresh cart items after update
+            //     fetchCartItems(accessToken); // Tải lại giỏ hàng sau khi cập nhật
             // }
         } catch (err) {
             setError(true);
         }
     };
-    const handleCheckout = () =>{
-        if(cartItems.length == 0){
+
+    const handleCheckout = () => {
+        if (cartItems.length === 0) {
             Swal.fire({
-                title: 'Warning!',
-                text: 'Please add products to card.',
+                title: 'Cảnh báo!',
+                text: 'Vui lòng thêm sản phẩm vào giỏ hàng.',
                 icon: 'warning',
                 confirmButtonText: 'OK',
-            }).then(() =>{
-                navigate(path.home)
-            });
+            })
+        } else {
+            navigate(path.checkout);
         }
-        else{
-            navigate(path.checkout)
-        }
-    }
+    };
+
     if (loading) {
         return <Loading />;
     }
 
     if (error) {
-        return <div>Error loading cart items</div>;
+        return <Error />;
     }
 
     return (
@@ -93,15 +91,15 @@ function Cart() {
             <Header />
             <div className="container mx-auto mt-20">
                 <div className="grid grid-cols-12 px-10 py-6 bg-white rounded" style={{ boxShadow: '0px 1px 13px 0px rgba(0, 0, 0, 0.05)' }}>
-                    <div className="col-span-4 font-normal text-base">Product</div>
-                    <div className="col-span-3 font-normal text-base">Price</div>
-                    <div className="col-span-3 font-normal text-base">Quantity</div>
-                    <div className="col-span-1 col-start-12 font-normal text-base">Subtotal</div>
+                    <div className="col-span-4 font-normal text-base">Sản Phẩm</div>
+                    <div className="col-span-3 font-normal text-base">Giá</div>
+                    <div className="col-span-3 font-normal text-base">Số Lượng</div>
+                    <div className="col-span-1 col-start-12 font-normal text-base">Tổng Cộng</div>
                 </div>
 
                 {cartItems.length === 0 ? (
                     <div className="text-center text-lg font-semibold mt-10">
-                        No products in cart
+                        Không có sản phẩm nào trong giỏ hàng
                     </div>
                 ) : (
                     cartItems.map((item) => (
@@ -136,7 +134,7 @@ function Cart() {
                     <Link to={path.home} className="border border-zinc-400 px-12 py-3 font-medium text-base rounded focus:bg-[#DB4444] focus:text-white 
                                         focus:border-[#DB4444] hover:bg-[#DB4444] 
                                         hover:text-white hover:border-[#DB4444]">
-                        Return To Shop
+                        Quay Về Cửa Hàng
                     </Link>
                     <button 
                         className="border border-zinc-400 px-12 py-3 font-medium text-base rounded focus:bg-[#DB4444] focus:text-white 
@@ -144,29 +142,29 @@ function Cart() {
                                         hover:text-white hover:border-[#DB4444]"
                         onClick={handleUpdateCart}
                     >
-                        Update Cart
+                        Cập Nhật Giỏ Hàng
                     </button>
                 </div>
 
                 <div className="grid grid-cols-12 my-20">
                     <div className="col-span-4 col-start-9 px-6 py-8 border-2 border-black rounded font-inter">
-                        <div className="text-xl font-semibold">Cart Total</div>
+                        <div className="text-xl font-semibold">Tổng Giỏ Hàng</div>
                         <div className="mt-6 flex justify-between font-normal">
-                            <div>Subtotal:</div>
+                            <div>Tổng Cộng:</div>
                             <div>${totalPrice}</div>
                         </div>
                         <div className="border-b mt-3"></div>
                         <div className="mt-6 flex justify-between font-normal">
-                            <div>Shipping:</div>
-                            <div>Free</div>
+                            <div>Vận Chuyển:</div>
+                            <div>Miễn Phí</div>
                         </div>
                         <div className="border-b mt-3"></div>
                         <div className="mt-6 flex justify-between font-normal">
-                            <div>Total:</div>
+                            <div>Tổng Cộng:</div>
                             <div>${totalPrice}</div>
                         </div>
                         <div className="mt-3 flex justify-center">
-                            <button onClick={handleCheckout} className="px-12 py-2 bg-[#DB4444] hover:bg-red-700 focus:bg-red-700 text-white rounded">Process to check out</button>
+                            <button onClick={handleCheckout} className="px-12 py-2 bg-[#DB4444] hover:bg-red-700 focus:bg-red-700 text-white rounded">Tiến Hành Thanh Toán</button>
                         </div>
                     </div>
                 </div>

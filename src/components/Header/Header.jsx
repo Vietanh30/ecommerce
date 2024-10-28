@@ -13,12 +13,27 @@ function Header() {
     const location = useLocation();
     const [quantityCart, setQuantityCart] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const token = getAccessTokenFromLS(); // Lấy token một lần để sử dụng nhiều lần
+    const [isScrolled, setIsScrolled] = useState(false); // Trạng thái để theo dõi cuộn
+    const token = getAccessTokenFromLS();
 
     useEffect(() => {
         if (token) {
             fetchCartItems(token);
         }
+
+        // Theo dõi sự kiện cuộn
+        const handleScroll = () => {
+            if (window.scrollY > 100) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, [token]);
 
     const fetchCartItems = async (token) => {
@@ -52,28 +67,42 @@ function Header() {
     };
 
     return (
-        <div className='border-b'>
-            <div className="container mx-auto pt-10 pb-4">
-                <div className="flex justify-between">
-                    <div className="font-inter text-2xl text-black font-bold">
+        <header className={`border-b z-50 w-full transition-all duration-1500 ${isScrolled ? 'fixed top-0 bg-white shadow-lg text-black' : 'relative bg-transparent text-black'}`}>
+            <div className="container mx-auto py-6">
+                <div className="flex justify-between items-center">
+                    <div className="font-inter text-2xl font-bold">
                         Exclusive
                     </div>
                     <div className="flex gap-12">
                         <Link to={path.home}>
-                            <div className={`relative ${location.pathname === path.home ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:-translate-y-1 after:mt-1' : ''}`}>
+                            <div className={`relative ${location.pathname === path.home ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:mt-1' : ''} hover:opacity-70`}>
                                 Trang Chủ
                             </div>
                         </Link>
                         <Link to={path.about}>
-                            <div className={`relative ${location.pathname === path.about ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:-translate-y-1 after:mt-1' : ''}`}>
+                            <div className={`relative ${location.pathname === path.about ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:mt-1' : ''} hover:opacity-70`}>
                                 Giới Thiệu
                             </div>
                         </Link>
-                        <Link to={path.register}>
-                            <div className={`relative ${location.pathname === path.login ? 'after:content-[""] after:block after:w-full after:h-[2px] after:bg-black after:-translate-y-1 after:mt-1' : ''}`}>
-                                Đăng Ký
-                            </div>
-                        </Link>
+                        {location.pathname === path.home && (
+                            <>
+                                <a href="#flash-sale">
+                                    <div className={`relative hover:opacity-70`}>
+                                        Giảm giá
+                                    </div>
+                                </a>
+                                <a href="#categories">
+                                    <div className={`relative hover:opacity-70`}>
+                                        Thể loại
+                                    </div>
+                                </a>
+                                <a href="#location">
+                                    <div className={`relative hover:opacity-70`}>
+                                        Vị trí
+                                    </div>
+                                </a>
+                            </>
+                        )}
                     </div>
                     <div className="flex gap-6">
                         <div className="relative">
@@ -121,7 +150,7 @@ function Header() {
                     </div>
                 </div>
             </div>
-        </div>
+        </header>
     );
 }
 

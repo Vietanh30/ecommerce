@@ -51,50 +51,46 @@ function Checkout() {
     const handlePlaceOrder = async () => {
         const token = getAccessTokenFromLS();
         if (!token) return;
-    
-        // Validation
+
+        // Kiểm tra
         if (!name || !phone || !selectedProvince || !selectedDistrict || !selectedWard || !detailAddress || !notes) {
-            Swal.fire("Error", "Please fill in all required fields.", "error");
+            Swal.fire("Lỗi", "Vui lòng điền đầy đủ thông tin cần thiết.", "error");
             return;
         }
-    
-        const wardId = selectedWard; // Assuming ward ID is the same as selectedWard value
+
+        const wardId = selectedWard; // Giả định ID phường là giá trị đã chọn
         try {
-           const responseCreateAddress = await userApi.createAddress(detailAddress, name, wardId, phone, token);
+            const responseCreateAddress = await userApi.createAddress(detailAddress, name, wardId, phone, token);
             console.log(responseCreateAddress);
-            if(responseCreateAddress.data.status === 200){
-                const responseOrder = await userApi.order(responseCreateAddress.data.data.id, 1, notes, totalPrice, token )
+            if (responseCreateAddress.data.status === 200) {
+                const responseOrder = await userApi.order(responseCreateAddress.data.data.id, 1, notes, totalPrice, token);
                 console.log(responseOrder);
-                
+
                 if (responseOrder.data.status === 200) {
                     Swal.fire({
-                        title: 'Success!',
-                        text: 'You ordered in successfully.',
+                        title: 'Thành công!',
+                        text: 'Bạn đã đặt hàng thành công.',
                         icon: 'success',
                         timer: 1500,
                         showConfirmButton: false
-                    }).then(()=>{
-                        navigate(path.home)
-                    })
-                }
-                else if (responseOrder.data.status === 422){
+                    }).then(() => {
+                        navigate(path.home);
+                    });
+                } else if (responseOrder.data.status === 422) {
                     Swal.fire({
-                        title: 'Error!',
+                        title: 'Lỗi!',
                         html: `
-                            ${responseOrder.data.message.phone ? responseOrder.data.message.phone + '<br>':''} 
-                            ${responseOrder.data.message.delivery_id ? responseOrder.data.message.delivery_id + '<br>':''} 
+                            ${responseOrder.data.message.phone ? responseOrder.data.message.phone + '<br>' : ''} 
+                            ${responseOrder.data.message.delivery_id ? responseOrder.data.message.delivery_id + '<br>' : ''} 
                         `,
                         icon: 'error',
-                        confirmButtonText: 'Try Again',
+                        confirmButtonText: 'Thử lại',
                     });
-                }                
+                }
             }
-            // Swal.fire("Success", "Order placed successfully!", "success");
-            // navigate(path.home); // Redirect to home or another page
         } catch (err) {
             console.log(err);
-            
-            Swal.fire("Error", "Failed to place order. Please try again.", "error");
+            Swal.fire("Lỗi", "Đặt hàng không thành công. Vui lòng thử lại.", "error");
         }
     };
 
@@ -113,12 +109,12 @@ function Checkout() {
         <>
             <Header />
             <div className="container mx-auto my-20">
-                <div className="font-inter text-4xl font-medium">Billing Details</div>
+                <div className="font-inter text-4xl font-medium">Thông Tin Thanh Toán</div>
                 <div className="grid grid-cols-2 mt-12 gap-28">
                     <div className="col-span-1">
                         <div>
                             <div className="text-sm font-normal opacity-40">
-                                Name <span className="text-[#DB4444]">*</span>
+                                Họ Tên <span className="text-[#DB4444]">*</span>
                             </div>
                             <input
                                 className="bg-[#F5F5F5] rounded py-2 w-full mt-2 px-4 text-base outline-none"
@@ -129,7 +125,7 @@ function Checkout() {
                         </div>
                         <div className="mt-5">
                             <div className="text-sm font-normal opacity-40">
-                                Phone Number <span className="text-[#DB4444]">*</span>
+                                Số Điện Thoại <span className="text-[#DB4444]">*</span>
                             </div>
                             <input
                                 className="bg-[#F5F5F5] rounded py-2 w-full mt-2 px-4 text-base outline-none"
@@ -140,7 +136,7 @@ function Checkout() {
                         </div>
                         <div className="mt-5">
                             <div className="text-sm font-normal opacity-40">
-                                Province <span className="text-[#DB4444]">*</span>
+                                Tỉnh/Thành Phố <span className="text-[#DB4444]">*</span>
                             </div>
                             <select
                                 className="bg-[#F5F5F5] rounded py-2 w-full mt-2 px-4 text-base outline-none"
@@ -151,7 +147,7 @@ function Checkout() {
                                     setSelectedWard("");
                                 }}
                             >
-                                <option value="">Select a province</option>
+                                <option value="">Chọn tỉnh/thành phố</option>
                                 {provinces.map((province) => (
                                     <option key={province.code} value={province.code}>
                                         {province.name}
@@ -161,7 +157,7 @@ function Checkout() {
                         </div>
                         <div className="mt-5">
                             <div className="text-sm font-normal opacity-40">
-                                District <span className="text-[#DB4444]">*</span>
+                                Quận/Huyện <span className="text-[#DB4444]">*</span>
                             </div>
                             <select
                                 className="bg-[#F5F5F5] rounded py-2 w-full mt-2 px-4 text-base outline-none"
@@ -172,7 +168,7 @@ function Checkout() {
                                 }}
                                 disabled={!selectedProvince}
                             >
-                                <option value="">Select a district</option>
+                                <option value="">Chọn quận/huyện</option>
                                 {filteredDistricts.map((district) => (
                                     <option key={district.code} value={district.code}>
                                         {district.name}
@@ -182,7 +178,7 @@ function Checkout() {
                         </div>
                         <div className="mt-5">
                             <div className="text-sm font-normal opacity-40">
-                                Ward <span className="text-[#DB4444]">*</span>
+                                Phường/Xã <span className="text-[#DB4444]">*</span>
                             </div>
                             <select
                                 className="bg-[#F5F5F5] rounded py-2 w-full mt-2 px-4 text-base outline-none"
@@ -190,7 +186,7 @@ function Checkout() {
                                 onChange={(e) => setSelectedWard(e.target.value)}
                                 disabled={!selectedDistrict}
                             >
-                                <option value="">Select a ward</option>
+                                <option value="">Chọn phường/xã</option>
                                 {filteredWards.map((ward) => (
                                     <option key={ward.code} value={ward.code}>
                                         {ward.name}
@@ -200,7 +196,7 @@ function Checkout() {
                         </div>
                         <div className="mt-5">
                             <div className="text-sm font-normal opacity-40">
-                                Number Home<span className="text-[#DB4444]">*</span>
+                                Số Nhà <span className="text-[#DB4444]">*</span>
                             </div>
                             <input
                                 className="bg-[#F5F5F5] rounded py-2 w-full mt-2 px-4 text-base outline-none"
@@ -211,7 +207,7 @@ function Checkout() {
                         </div>
                         <div className="mt-5">
                             <div className="text-sm font-normal opacity-40">
-                                Notes<span className="text-[#DB4444]"></span>
+                                Ghi Chú <span className="text-[#DB4444]"></span>
                             </div>
                             <textarea
                                 className="bg-[#F5F5F5] rounded py-2 w-full mt-2 px-4 text-base outline-none"
@@ -231,17 +227,17 @@ function Checkout() {
                             </div>
                         ))}
                         <div className="mt-6 flex justify-between w-4/5">
-                            <div>Subtotal:</div>
+                            <div>Tổng Tạm Tính:</div>
                             <div>${totalPrice}</div>
                         </div>
                         <div className="border-b border-2 w-4/5 mt-3"></div>
                         <div className="mt-6 flex justify-between w-4/5">
-                            <div>Shipping:</div>
-                            <div>Free</div>
+                            <div>Vận Chuyển:</div>
+                            <div>Miễn Phí</div>
                         </div>
                         <div className="border-b border-2 w-4/5 mt-3"></div>
                         <div className="mt-6 flex justify-between w-4/5">
-                            <div>Total:</div>
+                            <div>Tổng Cộng:</div>
                             <div>${totalPrice}</div>
                         </div>
                         <div className="mt-6">
@@ -249,7 +245,7 @@ function Checkout() {
                                 onClick={handlePlaceOrder}
                                 className="px-10 py-3 bg-[#DB4444] hover:bg-red-700 focus:bg-red-700 text-white rounded"
                             >
-                                Place Order
+                                Đặt Hàng
                             </button>
                         </div>
                     </div>

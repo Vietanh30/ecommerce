@@ -2,7 +2,7 @@ import React from 'react';
 
 function Category({ category }) {
     return (
-        <div className="border px-14 py-6 mx-auto mr-7 h-40">
+        <div className="border px-14 py-6 mx-auto mr-7 h-40 rounded-lg">
             <div className='flex justify-center'>
                 <img src={category.img || phone} alt={category.name} className="w-16 h-16 object-contain" />
             </div>
@@ -10,7 +10,7 @@ function Category({ category }) {
                 {category.name}
             </div>
         </div>
-    );
+    ); 
 }
 
 export default Category;
