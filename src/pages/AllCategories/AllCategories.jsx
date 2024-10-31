@@ -12,7 +12,7 @@ import imgInputFile from "../../assets/Dashboard/imgInputFile.svg";
 import Loading from "../../components/Loading/Loading";
 
 function AllCategories() {
-    const [categories, setCategories] = useState([]); // State để lưu trữ sản phẩm
+    const [categories, setCategories] = useState([]); // State để lưu trữ danh mục
     const [loading, setLoading] = useState(true); // State để quản lý trạng thái tải
     const [error, setError] = useState(null); // State để lưu trữ lỗi
     const [accessToken, setAccessToken] = useState("");
@@ -20,10 +20,10 @@ function AllCategories() {
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false); // State để quản lý modal thông tin
     const [categoryName, setCategoryName] = useState(""); // State cho tên danh mục
     const [categoryImage, setCategoryImage] = useState(null); // State cho ảnh danh mục
-    const [categoryNameAdd, setCategoryNameAdd] = useState(""); // State cho tên danh mục
-    const [categoryImageAdd, setCategoryImageAdd] = useState(null); // State cho ảnh danh mục
+    const [categoryNameAdd, setCategoryNameAdd] = useState(""); // State cho tên danh mục mới
+    const [categoryImageAdd, setCategoryImageAdd] = useState(null); // State cho ảnh danh mục mới
     const [imagePreview, setImagePreview] = useState(null); // State cho preview ảnh
-    const [imagePreviewAdd, setImagePreviewAdd] = useState(null); // State cho preview ảnh
+    const [imagePreviewAdd, setImagePreviewAdd] = useState(null); // State cho preview ảnh mới
     const [selectedCategory, setSelectedCategory] = useState(null); // State cho danh mục đã chọn
     const fileInputRef = useRef(null); // Sử dụng ref để tham chiếu đến input file
 
@@ -33,14 +33,14 @@ function AllCategories() {
         setAccessToken(token);
     }, []);
 
-    // Gọi API để lấy danh sách sản phẩm khi accessToken có sẵn
+    // Gọi API để lấy danh sách danh mục khi accessToken có sẵn
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchCategories = async () => {
             if (!accessToken) return; // Nếu không có accessToken, không gọi API
 
             try {
                 const response = await categoryApi.getAllCategories(accessToken); // Gọi API                
-                setCategories(response.data.data.data); // Giả sử response.data chứa danh sách sản phẩm
+                setCategories(response.data.data.data); // Giả sử response.data chứa danh sách danh mục
             } catch (err) {
                 setError(err.message); // Lưu trữ lỗi nếu có
             } finally {
@@ -48,15 +48,14 @@ function AllCategories() {
             }
         };
 
-        fetchProducts();
+        fetchCategories();
     }, [accessToken]); // Thêm accessToken vào dependency array
 
     const handleAddCategory = async () => {
-        
         if (!categoryNameAdd || !categoryImageAdd) {
             Swal.fire({
-                title: 'Warning!',
-                text: 'Please fill in all fields.',
+                title: 'Cảnh báo!',
+                text: 'Vui lòng điền đầy đủ thông tin.',
                 icon: 'warning',
                 confirmButtonText: 'OK',
             });
@@ -68,12 +67,12 @@ function AllCategories() {
         formData.append("image", categoryImageAdd);
     
         try {
-            setLoading(true)
+            setLoading(true);
             const response = await categoryApi.addCategory(formData, accessToken); // Gọi API với accessToken              
             if (response.data.status === 200) {
                 Swal.fire({
-                    title: 'Success!',
-                    text: 'Category added successfully.',
+                    title: 'Thành công!',
+                    text: 'Danh mục đã được thêm thành công.',
                     icon: 'success',
                     confirmButtonText: 'OK',
                 });
@@ -84,22 +83,21 @@ function AllCategories() {
                 setImagePreviewAdd(null); // Reset preview ảnh
             } else if (response.data.status === 422) {
                 Swal.fire({
-                    title: 'Error!',
-                    text: response.data.message.name || 'Invalid input.',
+                    title: 'Lỗi!',
+                    text: response.data.message.name || 'Dữ liệu không hợp lệ.',
                     icon: 'error',
-                    confirmButtonText: 'Try Again',
+                    confirmButtonText: 'Thử lại',
                 });
             }
         } catch (error) {
             Swal.fire({
-                title: 'Error!',
-                text: 'Failed to add category. Please try again.',
+                title: 'Lỗi!',
+                text: 'Thêm danh mục thất bại. Vui lòng thử lại.',
                 icon: 'error',
-                confirmButtonText: 'Try Again',
+                confirmButtonText: 'Thử lại',
             });
-        }
-        finally{
-            setLoading(false)
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -114,6 +112,7 @@ function AllCategories() {
             reader.readAsDataURL(file);
         }
     };
+
     const handleImageChangeAdd = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -125,6 +124,7 @@ function AllCategories() {
             reader.readAsDataURL(file);
         }
     };
+
     const handleClick = () => {
         fileInputRef.current.click(); // Mở hộp thoại chọn file khi nhấp vào khung
     };
@@ -138,42 +138,40 @@ function AllCategories() {
 
     const handleDeleteCategory = async () => {
         const result = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Bạn có chắc không?',
+            text: "Bạn sẽ không thể khôi phục lại điều này!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: 'Có, xóa nó!',
+            cancelButtonText: 'Hủy',
         });
     
         if (result.isConfirmed) {
-        setLoading(true);
+            setLoading(true);
             try {
                 const response = await categoryApi.deleteCategory(selectedCategory.id, accessToken); // Gọi API xóa danh mục
                 if (response.data.status === 200) {
                     Swal.fire({
-                        title: 'Deleted!',
-                        text: 'Category deleted successfully.',
+                        title: 'Đã xóa!',
+                        text: 'Danh mục đã được xóa thành công.',
                         icon: 'success',
                         confirmButtonText: 'OK',
                     });
-                    setCategories(categories.filter(item => item.id !== selectedCategory.id)); // Cập nhật danh sách sản phẩm
+                    setCategories(categories.filter(item => item.id !== selectedCategory.id)); // Cập nhật danh sách danh mục
                     setIsInfoModalOpen(false); // Đóng modal thông tin
                     setSelectedCategory(null); // Reset danh mục đã chọn
                 }
             } catch (error) {
                 Swal.fire({
-                    title: 'Error!',
-                    text: 'Failed to delete category. Please try again.',
+                    title: 'Lỗi!',
+                    text: 'Xóa danh mục thất bại. Vui lòng thử lại.',
                     icon: 'error',
-                    confirmButtonText: 'Try Again',
+                    confirmButtonText: 'Thử lại',
                 });
-            }
-            finally{
+            } finally {
                 setLoading(false);
-
             }
         }
     };
@@ -197,8 +195,8 @@ function AllCategories() {
         
         if (!isUpdated) {
             Swal.fire({
-                title: 'No Changes!',
-                text: 'Please update the category name or image before submitting.',
+                title: 'Không có thay đổi!',
+                text: 'Vui lòng cập nhật tên hoặc ảnh danh mục trước khi gửi.',
                 icon: 'info',
                 confirmButtonText: 'OK',
             });
@@ -210,8 +208,8 @@ function AllCategories() {
             const response = await categoryApi.editCategory(formData, accessToken); // Gọi API cập nhật danh mục            
             if (response.data.status === 200) {
                 Swal.fire({
-                    title: 'Updated!',
-                    text: 'Category updated successfully.',
+                    title: 'Đã cập nhật!',
+                    text: 'Danh mục đã được cập nhật thành công.',
                     icon: 'success',
                     confirmButtonText: 'OK',
                 });
@@ -221,37 +219,36 @@ function AllCategories() {
                     item.id === selectedCategory.id 
                         ? { ...item, name: categoryName, img: categoryImage ? URL.createObjectURL(categoryImage) : item.img } 
                         : item
-                )); // Cập nhật danh sách sản phẩm
+                )); // Cập nhật danh sách danh mục
             } else if (response.data.status === 422) {
                 Swal.fire({
-                    title: 'Error!',
+                    title: 'Lỗi!',
                     html: `
                         ${response.data.message.name ? response.data.message.name + '<br>' : ''}
                     `,
                     icon: 'error',
-                    confirmButtonText: 'Try Again',
+                    confirmButtonText: 'Thử lại',
                 });
-            }
-             else {
+            } else {
                 Swal.fire({
-                    title: 'Error!',
-                    text: 'Failed to update category. Please try again.',
+                    title: 'Lỗi!',
+                    text: 'Cập nhật danh mục thất bại. Vui lòng thử lại.',
                     icon: 'error',
-                    confirmButtonText: 'Try Again',
+                    confirmButtonText: 'Thử lại',
                 });
             }
         } catch (error) {
             Swal.fire({
-                title: 'Error!',
-                text: 'Failed to update category. Please try again.',
+                title: 'Lỗi!',
+                text: 'Cập nhật danh mục thất bại. Vui lòng thử lại.',
                 icon: 'error',
-                confirmButtonText: 'Try Again',
+                confirmButtonText: 'Thử lại',
             });
-        }
-        finally{
+        } finally {
             setLoading(false);
         }
     };
+
     if (loading) return <Loading />; // Hiển thị loading khi đang tải
     if (error) return <ErrorAdmin />; // Hiển thị lỗi nếu có
 
@@ -263,19 +260,19 @@ function AllCategories() {
                     <Navbar />
                     <div className="px-8">
                         <div className="flex justify-between items-center mt-6">
-                            <div className="text-2xl font-semibold">All Categories</div>
+                            <div className="text-2xl font-semibold">Tất cả Danh Mục</div>
                             <button 
                                 onClick={() => setIsModalOpen(true)} 
                                 className="px-8 py-3 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]"
                             >
-                                Add Category
+                                Thêm Danh Mục
                             </button>
                         </div>
                         <div className="mt-8">
                             <div className="grid grid-cols-12 gap-4">
                                 {categories.map((category) => (
                                     <button
-                                        key={category.id} // Giả sử mỗi sản phẩm có id duy nhất
+                                        key={category.id} // Giả sử mỗi danh mục có id duy nhất
                                         onClick={() => handleCategoryClick(category)} // Mở modal thông tin khi nhấp vào danh mục
                                         className="col-span-3 h-full bg-[#FAFAFA] rounded-2xl p-4 hover:scale-105 cursor-pointer transition-transform duration-300 ease-in-out"
                                     >
@@ -301,11 +298,11 @@ function AllCategories() {
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div className="bg-white rounded shadow-lg p-6 w-1/3">
-                        <h2 className="text-xl font-semibold">Add Category</h2>
+                        <h2 className="text-xl font-semibold">Thêm Danh Mục</h2>
                         <div className="mt-4">
                             <input
                                 type="text"
-                                placeholder="Category Name"
+                                placeholder="Tên Danh Mục"
                                 value={categoryNameAdd}
                                 onChange={(e) => setCategoryNameAdd(e.target.value)}
                                 className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full"
@@ -316,12 +313,12 @@ function AllCategories() {
                                     onClick={handleClick}
                                 >
                                     <div className="flex justify-center mb-4">
-                                        <img className="w-10 h-auto" src={imgInputFile} alt="Upload" />
+                                        <img className="w-10 h-auto" src={imgInputFile} alt="Tải lên" />
                                     </div>
                                     <p className="text-blue-500 font-semibold mb-2 text-sm">
-                                        Drop your image here, or browse
+                                        Kéo thả hình ảnh của bạn vào đây, hoặc duyệt
                                     </p>
-                                    <p className="text-gray-500 text-sm">jpeg, png, svg are allowed</p>
+                                    <p className="text-gray-500 text-sm">jpeg, png, svg được phép</p>
                                     <input
                                         type="file"
                                         className="hidden"
@@ -338,12 +335,12 @@ function AllCategories() {
                                             className="w-16 h-auto object-cover mr-2 rounded-lg"
                                         />
                                         <div className="w-full px-3 flex justify-between">
-                                            <span>{categoryImageAdd.name || "Uploaded Image"}</span>
+                                            <span>{categoryImageAdd.name || "Hình ảnh đã tải lên"}</span>
                                             <button
                                                 className="text-white rounded-full ml-2 px-2 py-1 bg-red-600 text-xs"
                                                 onClick={() => {
                                                     setCategoryImageAdd(null);
-                                                    setImagePreview(null);
+                                                    setImagePreviewAdd(null);
                                                 }}
                                             >
                                                 X
@@ -358,13 +355,13 @@ function AllCategories() {
                                 onClick={() => setIsModalOpen(false)}
                                 className="mr-2 px-6 py-2 border-2 border-[#232321] rounded-lg text-[#232321] hover:bg-[#f0f0f0]"
                             >
-                                Cancel
+                                Hủy
                             </button>
                             <button
                                 onClick={handleAddCategory}
                                 className="px-6 py-2 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]"
                             >
-                                Add Category
+                                Thêm Danh Mục
                             </button>
                         </div>
                     </div>
@@ -375,7 +372,7 @@ function AllCategories() {
             {isInfoModalOpen && selectedCategory && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div className="bg-white rounded shadow-lg p-6 w-1/3">
-                        <h2 className="text-xl font-semibold">Category Info</h2>
+                        <h2 className="text-xl font-semibold">Thông Tin Danh Mục</h2>
                         <div className="mt-4">
                             <div className="mb-4">
                                 <div className="flex flex-col">
@@ -389,11 +386,11 @@ function AllCategories() {
                                         className="border-2 border-dashed border-gray-400 rounded-lg p-6 text-center cursor-pointer"
                                         onClick={handleClick}
                                     >
-                                        <img className="w-10 h-auto mx-auto" src={imgInputFile} alt="Upload" />
+                                        <img className="w-10 h-auto mx-auto" src={imgInputFile} alt="Tải lên" />
                                         <p className="text-blue-500 font-semibold my-2 text-sm">
-                                            Drop your image here, or browse
+                                            Kéo thả hình ảnh của bạn vào đây, hoặc duyệt
                                         </p>
-                                        <p className="text-gray-500 text-sm">jpeg, png, svg are allowed</p>
+                                        <p className="text-gray-500 text-sm">jpeg, png, svg được phép</p>
                                         <input
                                             type="file"
                                             className="hidden"
@@ -410,7 +407,7 @@ function AllCategories() {
                                                 className="w-16 h-auto object-cover mr-2 rounded-lg"
                                             />
                                             <div className="w-full px-3 flex justify-between">
-                                                <span>{categoryImage?.name || "Uploaded Image"}</span>
+                                                <span>{categoryImage?.name || "Hình ảnh đã tải lên"}</span>
                                                 <button
                                                     className="text-white rounded-full ml-2 px-2 py-1 bg-red-600 text-xs"
                                                     onClick={() => {
@@ -431,19 +428,19 @@ function AllCategories() {
                                 onClick={() => setIsInfoModalOpen(false)}
                                 className="mr-2 px-6 py-2 border-2 border-[#232321] rounded-lg text-[#232321] hover:bg-[#f0f0f0]"
                             >
-                                Cancel
+                                Hủy
                             </button>
                             <button
                                 onClick={handleUpdateCategory}
                                 className="mr-2 px-6 py-2 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]"
                             >
-                                Update
+                                Cập Nhật
                             </button>
                             <button
                                 onClick={handleDeleteCategory}
                                 className="px-6 py-2 bg-red-600 rounded-lg text-white hover:bg-red-700"
                             >
-                                Delete
+                                Xóa
                             </button>
                         </div>
                     </div>

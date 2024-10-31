@@ -10,6 +10,7 @@ import productApi from "../../api/productApi"; // Đảm bảo bạn có product
 import Error from "../Error/Error";
 import Swal from 'sweetalert2';
 import Loading from "../../components/Loading/Loading";
+
 function AddProduct() {
     const fileInputRef = useRef(null);
     const [image, setImage] = useState(null);
@@ -48,15 +49,13 @@ function AddProduct() {
         fetchCategories();
     }, [accessToken]);
 
-   
-
     const handleClick = () => {
         fileInputRef.current.click();
     };
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        setFileImage(file)
+        setFileImage(file);
         if (!file) return;
 
         const reader = new FileReader();
@@ -92,26 +91,26 @@ function AddProduct() {
     const validateForm = () => {
         const { name, description, categoryId, costPrice, salePrice } = formData;
         if (!name || !description || !categoryId || !costPrice || !salePrice || !image) {
-            return "All fields are required.";
+            return "Tất cả các trường đều bắt buộc.";
         }
         if (isNaN(costPrice) || isNaN(salePrice)) {
-            return "Cost Price and Sale Price must be numbers.";
+            return "Giá vốn và Giá bán phải là số.";
         }
         return null;
     };
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const errorMessage = validateForm();
         if (errorMessage) {
             Swal.fire({
                 icon: 'error',
-                title: 'Validation Error',
+                title: 'Lỗi Kiểm Tra',
                 text: errorMessage,
             });
             return;
         }
-    
+
         const data = new FormData();
         data.append("category_id", formData.categoryId);
         data.append("cost_price", formData.costPrice);
@@ -123,49 +122,46 @@ function AddProduct() {
             setLoading(true);
             const response = await productApi.addProduct(data, accessToken);
             console.log(response);
-            
-            if (response.data.status === 200){
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Product added successfully!',
-            }).then(() => {
-                setFormData(
-                    {
-                    name: "",
-                    description: "",
-                    categoryId: "",
-                    costPrice: "",
-                    salePrice: ""
-                })
-                setFileImage(null)
-                setImage(null)
-            });
-            }
-            else if (response.data.status === 422){
+
+            if (response.data.status === 200) {
                 Swal.fire({
-                    title: 'Error!',
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Thêm sản phẩm thành công!',
+                }).then(() => {
+                    setFormData({
+                        name: "",
+                        description: "",
+                        categoryId: "",
+                        costPrice: "",
+                        salePrice: ""
+                    });
+                    setFileImage(null);
+                    setImage(null);
+                });
+            } else if (response.data.status === 422) {
+                Swal.fire({
+                    title: 'Lỗi!',
                     html: `
                         ${response.data.message.name ? response.data.message.name + '<br>' : ''}
                         ${response.data.message.selling_price ? response.data.message.selling_price + '<br>' : ''}
                     `,
                     icon: 'error',
-                    confirmButtonText: 'Try Again',
+                    confirmButtonText: 'Thử lại',
                 });
             }
         } catch (err) {
             Swal.fire({
                 icon: 'error',
-                title: 'Create Failed',
-                text: 'Failed to add product. Please try again.',
+                title: 'Tạo Thất Bại',
+                text: 'Thêm sản phẩm thất bại. Vui lòng thử lại.',
             });
-            // setError(err.message)
             console.log(err);
-        }
-        finally{
+        } finally {
             setLoading(false);
         }
     };
+
     if (loading) return <Loading />;
     if (error) return <Error />;
     return (
@@ -175,13 +171,13 @@ function AddProduct() {
                 <div className="w-full bg-[#E7E7E3]">
                     <Navbar />
                     <div className="px-4">
-                        <div className="text-2xl mt-6 font-semibold">Add Product</div>
+                        <div className="text-2xl mt-6 font-semibold">Thêm Sản Phẩm</div>
                         <div className="p-6 rounded-2xl bg-white mt-5">
                             <form onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-12">
                                     <div className="col-span-6">
                                         <div>
-                                            <div className="font-semibold text-xl">Product Name</div>
+                                            <div className="font-semibold text-xl">Tên Sản Phẩm</div>
                                             <input
                                                 name="name"
                                                 value={formData.name}
@@ -191,7 +187,7 @@ function AddProduct() {
                                             />
                                         </div>
                                         <div className="mt-5">
-                                            <div className="font-semibold text-xl">Description</div>
+                                            <div className="font-semibold text-xl">Mô Tả</div>
                                             <textarea
                                                 name="description"
                                                 value={formData.description}
@@ -200,14 +196,14 @@ function AddProduct() {
                                             />
                                         </div>
                                         <div className="mt-5">
-                                            <div className="font-semibold text-xl">Category</div>
+                                            <div className="font-semibold text-xl">Danh Mục</div>
                                             <select
                                                 name="categoryId"
                                                 value={formData.categoryId}
                                                 onChange={handleChange}
                                                 className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full"
                                             >
-                                                <option value="">Select a category</option>
+                                                <option value="">Chọn một danh mục</option>
                                                 {categories.map((category) => (
                                                     <option key={category.id} value={category.id}>
                                                         {category.name}
@@ -218,7 +214,7 @@ function AddProduct() {
                                         <div className="mt-5">
                                             <div className="flex gap-6">
                                                 <div className="w-full">
-                                                    <div className="font-semibold text-xl">Cost Price</div>
+                                                    <div className="font-semibold text-xl">Giá Vốn</div>
                                                     <input
                                                         name="costPrice"
                                                         value={formData.costPrice}
@@ -228,7 +224,7 @@ function AddProduct() {
                                                     />
                                                 </div>
                                                 <div className="w-full">
-                                                    <div className="font-semibold text-xl">Sale Price</div>
+                                                    <div className="font-semibold text-xl">Giá Bán</div>
                                                     <input
                                                         name="salePrice"
                                                         value={formData.salePrice}
@@ -246,12 +242,12 @@ function AddProduct() {
                                             onClick={handleClick}
                                         >
                                             <div className="flex justify-center mb-4">
-                                                <img src={imgInputFile} alt="Upload" />
+                                                <img src={imgInputFile} alt="Tải lên" />
                                             </div>
                                             <p className="text-blue-500 font-semibold mb-2">
-                                                Drop your image here, or browse
+                                                Kéo thả hình ảnh của bạn vào đây, hoặc duyệt
                                             </p>
-                                            <p className="text-gray-500">jpeg, png, svg are allowed</p>
+                                            <p className="text-gray-500">jpeg, png, svg được phép</p>
                                             <input
                                                 type="file"
                                                 className="hidden"
@@ -261,7 +257,7 @@ function AddProduct() {
                                             />
                                         </div>
                                         <div className="mt-5">
-                                            <div className="font-semibold text-xl">Product Image</div>
+                                            <div className="font-semibold text-xl">Hình Ảnh Sản Phẩm</div>
                                             {image && (
                                                 <div className="flex items-center justify-between mt-2 p-3 border rounded-lg bg-[#FAFAFA]">
                                                     <img
@@ -297,8 +293,8 @@ function AddProduct() {
                                             )}
                                         </div>
                                         <div className="mt-8 flex justify-end gap-5">
-                                            <Link to={path.allProduct} className="px-8 py-2 border-2 border-[#232321] rounded-lg text-[#232321] hover:bg-[#f0f0f0]">Cancel</Link>
-                                            <button type="submit" className="px-8 py-2 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]">Add Product</button>
+                                            <Link to={path.allProduct} className="px-8 py-2 border-2 border-[#232321] rounded-lg text-[#232321] hover:bg-[#f0f0f0]">Hủy</Link>
+                                            <button type="submit" className="px-8 py-2 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]">Thêm Sản Phẩm</button>
                                         </div>
                                     </div>
                                 </div>

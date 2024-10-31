@@ -15,7 +15,7 @@ function AddProductChild() {
     const [accessToken, setAccessToken] = useState("");
     const [loading, setLoading] = useState(false); // State để quản lý trạng thái tải
     const [error, setError] = useState(false); // State để lưu trữ lỗi
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const fileInputRef = useRef(null);
     const [image, setImage] = useState(null);
     const [fileImage, setFileImage] = useState(null);
@@ -27,17 +27,19 @@ function AddProductChild() {
         selling_price: "",
         quantity: "",
     });
+
     useEffect(() => {
         const token = getAccessTokenFromLS();
         setAccessToken(token);
     }, []);
+
     const handleClick = () => {
         fileInputRef.current.click();
     };
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        setFileImage(file)
+        setFileImage(file);
         if (!file) return;
 
         const reader = new FileReader();
@@ -83,8 +85,8 @@ function AddProductChild() {
         if (!feature_name || !cost_price || !selling_price || !quantity || !image) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Incomplete Information',
-                text: 'Please fill in all fields and upload an image.',
+                title: 'Thông tin không đầy đủ',
+                text: 'Vui lòng điền tất cả các trường và tải lên hình ảnh.',
             });
             return false;
         }
@@ -113,8 +115,8 @@ function AddProductChild() {
             if (response.data.status === 200) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Success!',
-                    text: 'Product child added successfully.',
+                    title: 'Thành công!',
+                    text: 'Sản phẩm con đã được thêm thành công.',
                 }).then(() => {
                     setProductData({
                         product_id: id, // Sử dụng ID của sản phẩm cha
@@ -122,32 +124,32 @@ function AddProductChild() {
                         cost_price: "",
                         selling_price: "",
                         quantity: "",
-                    })
-                    setImage(null)
+                    });
+                    setImage(null);
                 });
                 // Xử lý điều hướng hoặc reset form ở đây nếu cần
-            }
-            else if (response.data.status === 422){
+            } else if (response.data.status === 422) {
                 Swal.fire({
-                    title: 'Error!',
+                    title: 'Lỗi!',
                     html: `
                         ${response.data.message.feature_name ? response.data.message.feature_name + '<br>' : ''}
                         ${response.data.message.selling_price ? response.data.message.selling_price + '<br>' : ''}
                     `,
                     icon: 'error',
-                    confirmButtonText: 'Try Again',
+                    confirmButtonText: 'Thử lại',
                 });
             }
         } catch (error) {
-            setError(true)
+            setError(true);
             console.error(error);
-        }
-        finally{
+        } finally {
             setLoading(false);
         }
     };
+
     if (loading) return <Loading />; // Hiển thị loading khi đang tải
     if (error) return <ErrorAdmin />; // Hiển thị lỗi nếu có
+    
     return (
         <>
             <div className="flex">
@@ -155,12 +157,12 @@ function AddProductChild() {
                 <div className="w-full bg-[#E7E7E3]">
                     <Navbar />
                     <div className="px-4">
-                        <div className="text-2xl mt-6 font-semibold">Add Product Child</div>
+                        <div className="text-2xl mt-6 font-semibold">Thêm sản phẩm con</div>
                         <div className="p-6 rounded-2xl bg-white mt-5">
                             <div className="grid grid-cols-12">
                                 <div className="col-span-6">
                                     <div>
-                                        <div className="font-semibold text-xl">Feature Name</div>
+                                        <div className="font-semibold text-xl">Tên Tính Năng</div>
                                         <input 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                             type="text" 
@@ -171,7 +173,7 @@ function AddProductChild() {
                                         />
                                     </div>
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Cost Price</div>
+                                        <div className="font-semibold text-xl">Giá Vốn</div>
                                         <input 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                             type="number" 
@@ -182,7 +184,7 @@ function AddProductChild() {
                                         />
                                     </div>
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Selling Price</div>
+                                        <div className="font-semibold text-xl">Giá Bán</div>
                                         <input 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                             type="number" 
@@ -193,7 +195,7 @@ function AddProductChild() {
                                         />
                                     </div>
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Quantity</div>
+                                        <div className="font-semibold text-xl">Số Lượng</div>
                                         <input 
                                             className="mt-3 py-2 px-4 border-2 rounded-lg border-[#232321] w-full" 
                                             type="number" 
@@ -210,12 +212,12 @@ function AddProductChild() {
                                         onClick={handleClick}
                                     >
                                         <div className="flex justify-center mb-4">
-                                            <img src={imgInputFile} alt="Upload" />
+                                            <img src={imgInputFile} alt="Tải lên" />
                                         </div>
                                         <p className="text-blue-500 font-semibold mb-2">
-                                            Drop your image here, or browse
+                                            Kéo thả hình ảnh của bạn vào đây, hoặc duyệt
                                         </p>
-                                        <p className="text-gray-500">jpeg, png, svg are allowed</p>
+                                        <p className="text-gray-500">jpeg, png, svg được phép</p>
                                         <input
                                             type="file"
                                             className="hidden"
@@ -225,7 +227,7 @@ function AddProductChild() {
                                         />
                                     </div>
                                     <div className="mt-5">
-                                        <div className="font-semibold text-xl">Product Image</div>
+                                        <div className="font-semibold text-xl">Hình Ảnh Sản Phẩm</div>
                                         {image && (
                                             <div className="flex items-center justify-between mt-2 p-3 border rounded-lg bg-[#FAFAFA]">
                                                 <img 
@@ -261,11 +263,12 @@ function AddProductChild() {
                                         )}
                                     </div>
                                     <div className="mt-8 flex justify-end gap-5">
-                                    <Link to={`${path.allProduct}/${id}`} className="px-8 py-2 border-2 border-[#232321] rounded-lg text-[#232321] hover:bg-[#f0f0f0]">Cancel</Link>                                        <button 
+                                        <Link to={`${path.allProduct}/${id}`} className="px-8 py-2 border-2 border-[#232321] rounded-lg text-[#232321] hover:bg-[#f0f0f0]">Hủy</Link>
+                                        <button 
                                             onClick={handleAddProductChild} 
                                             className="px-8 py-2 bg-[#003F62] rounded-lg text-white hover:bg-[#002144]"
                                         >
-                                            Add Product Child
+                                            Thêm Sản Phẩm Con
                                         </button>
                                     </div>
                                 </div>
