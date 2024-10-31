@@ -19,12 +19,13 @@ import Loading from "../../components/Loading/Loading";
 import Error from "../Error/Error";
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // Nhập CSS của AOS
+import ButtonBoxChat from "../../components/ButtonBoxChat/ButtonBoxChat";
+import ChatBox from "../../components/ChatBox/ChatBox";
 function Home() {
     // Khởi tạo AOS
     useEffect(() => {
         AOS.init();
     }, []);
-
     const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState([]);
     const [bestSale, setBestSale] = useState([]);
@@ -215,6 +216,7 @@ function Home() {
                     </iframe>
                 </div>
             </div>
+            <ChatBox />
             <Footer />
         </div>
     );
