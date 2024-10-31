@@ -10,12 +10,12 @@ function Sidebar() {
         <div className="bg-[#E7E7E3]">
             <div className="flex flex-col min-h-screen h-full w-60 bg-white text-[#232321] p-5 border-r-2 rounded-ee-2xl">
                 <h2 className="text-2xl font-bold mb-6 cursor-pointer">Exclusive</h2>
-                <Link
+                {/* <Link
                     to={path.dashboard} // Đường dẫn cho Dashboard
                     className={`mb-4 p-2 rounded-lg ${location.pathname === path.dashboard ? "bg-[#003F62] text-white" : "hover:bg-[#003F62] hover:text-white"}`}
                 >
                     Trang chủ
-                </Link>
+                </Link> */}
                 <Link
                     to={path.allCategories} // Đường dẫn cho Tất cả Thể Loại
                     className={`mb-4 p-2 rounded-lg ${location.pathname === path.allCategories ? "bg-[#003F62] text-white" : "hover:bg-[#003F62] hover:text-white"}`}
