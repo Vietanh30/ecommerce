@@ -51,9 +51,6 @@ function App() {
           } />
           {/* admin routes */}
           <Route path={path.loginAdmin} element={<LoginAdmin />} />
-          <Route path={path.dashboard} element={
-            <PrivateRoute requiredRole={1}><Dashboard /></PrivateRoute>
-          } />
           <Route path={path.allProduct} element={
             <PrivateRoute requiredRole={1}><AllProduct /></PrivateRoute>
           } />

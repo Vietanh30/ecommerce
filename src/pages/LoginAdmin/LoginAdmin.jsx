@@ -43,7 +43,7 @@ function LoginAdmin() {
                     showConfirmButton: false
                 }).then(() => {
                     setAccessTokenToLS(response.data.data.access_token);
-                    navigate(path.dashboard);
+                    navigate(path.allCategories);
                 });
                 const profile = await adminApi.getProfile(response.data.data.access_token);
                 setProfileToLS(profile.data.data);
